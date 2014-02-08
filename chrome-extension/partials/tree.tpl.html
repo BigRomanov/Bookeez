@@ -1,0 +1,18 @@
+<div id="mainContent">
+  <div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand">Bookies</a>
+      </div>
+      <form class="navbar-form navbar-left" role="search">
+        <div class="form-group">
+          <input type="search" class="form-control search-bookmarks" placeholder="Search" ng-model="searchText" autofocus="true">
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="container">
+    <bookmark-tree ng-model="bookmarkTree"></bookmark-tree>
+  </div>
+</div>
+

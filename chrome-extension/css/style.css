@@ -1,0 +1,109 @@
+html { 
+  overflow-y: scroll; /* Always show vertical scroll, so user will not see glitches on showing / hiding scrollbar when he is searching */
+}
+
+body {
+  padding-top: 225px;
+  padding-bottom: 50px;
+}
+
+@media (min-width: 768px) {
+  body {
+    padding-top: 100px;
+  }
+}
+
+.badge-pointer { 
+  cursor: pointer !important;
+}
+
+.breadcrumb {
+  margin-bottom: 0px !important;
+  padding: 0px !important;
+  display: inline !important;
+}
+
+.badge-custom {
+  background-color: #309134 !important;
+}
+
+  .badge-custom a {
+    color: #000;
+    opacity: .2;
+    font-weight: bold;
+    line-height: 1;
+  }
+
+  .badge-custom a:hover {
+    text-decoration: none;
+    cursor: pointer;
+    opacity: 0.5;
+  }
+
+  .badge-custom input[type=text] {
+    width: 100px;
+    padding: 2px;
+    height: auto;
+  }
+
+  .badge-custom span:focus {
+    background-color: #fff;
+    color: grey;
+  }
+
+.link-custom {
+  color: #309134 !important;
+  cursor: pointer;
+}
+
+.overflow-protection {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.search-bookmarks {
+}
+
+.margin-right-5px {
+  margin-right: 5px;
+}
+
+.list-unstyled span.badge {
+  margin: 5px 0;
+}
+
+@media (min-width: 768px) {
+  .search-bookmarks {
+    width:250pt;
+  }
+}
+
+.bookmark {
+  height:20px;
+  padding:2px;
+  margin:2px;
+  line-height: 20px;
+  text-align: middle;
+}
+
+.bookmark a.bookmark-title {
+  padding:4px;
+}
+
+.bookmark a.bookmark-edit {
+  display:none;
+  text-decoration:none;
+}
+
+.bookmark:hover a.bookmark-edit {
+  display:inline;
+}
+
+/* AngularJS */
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+.nav, .pagination, .carousel a { cursor: pointer; }
