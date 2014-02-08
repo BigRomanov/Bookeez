@@ -176,7 +176,7 @@ var BookmarkModel = function () {
     enumerateAllCustomTagChunks({n: true}, -1, function() {
       chrome.bookmarks.getTree(function(tree) {
         createBookmarks(rootFolder, tree[0].children, []);
-        callback([rootFolder.children[0]]);
+        callback(rootFolder.children);
       });
     });
   };
