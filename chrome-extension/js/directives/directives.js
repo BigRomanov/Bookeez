@@ -33,24 +33,21 @@ bookiesApp.directive('bookmark', function($compile) {
       '</span>' +
     '</li>',
     link: function(scope, elm, attrs) {
-      scope.bookmarkClicked = function(bookmark, $event) {
+      scope.editBookmark = function(bookmark, $event) {
       };
 
       scope.bookmarkClicked = function(bookmark, $event) {
         bookmark.checked = !bookmark.checked;
         if (scope.bookmark.type=="folder" && scope.bookmark.children.length > 0) {
-          if (scope.bookmark.checked ==true)
+          if (scope.bookmark.checked == true)
           {
             var bookmarkChoice = $compile('<bookmark-tree ng-model="bookmark.children"></bookmark-tree>')(scope)
             elm.append(bookmarkChoice);
           }
           else
           {
-            var target = $event.target;
-            console.log(target);
-            console.log($(target).parent().parent());
-            console.log($(target).parent('div'));
-            $(target).empty();
+            console.log(elm);
+            $('ul',elm).remove(); 
           }
         }
       }; 
