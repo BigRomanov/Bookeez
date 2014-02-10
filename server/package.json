@@ -7,6 +7,11 @@
   },
   "dependencies": {
     "express": "3.4.7",
-    "jade": "*"
+    "jade": "*",
+    "mongodb": "*",
+    "mongoose": "*",
+    "passport": "*",
+    "passport-local": "*",
+    "passport-local-mongoose": "*"
   }
 }
