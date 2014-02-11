@@ -69,7 +69,7 @@ bookiesApp.directive('bookmark', function($compile) {
         if (scope.bookmark.type=="folder" && scope.bookmark.children.length > 0) {
           if (scope.bookmark.checked == true)
           {
-            var bookmarks = $compile('<bookmark-tree on-edit="onEdit(bookmark)" ng-model="bookmark.children"></bookmark-tree>')(scope)
+            var bookmarks = $compile('<bookmark-tree on-edit="onEdit({bookmark:bookmark})" ng-model="bookmark.children"></bookmark-tree>')(scope)
             elm.append(bookmarks);
           }
           else
@@ -81,7 +81,7 @@ bookiesApp.directive('bookmark', function($compile) {
       }; 
       
       if (scope.bookmark.type=="folder" && scope.bookmark.checked == true && scope.bookmark.children.length > 0) {
-        var bookmarks = $compile('<bookmark-tree on-edit="onEdit(bookmark)" ng-model="bookmark.children"></bookmark-tree>')(scope)
+        var bookmarks = $compile('<bookmark-tree on-edit="onEdit({bookmark:bookmark})" ng-model="bookmark.children"></bookmark-tree>')(scope)
         elm.append(bookmarks);
       }
 
