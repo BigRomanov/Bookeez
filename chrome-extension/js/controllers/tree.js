@@ -93,6 +93,34 @@ var TreeController = function($scope, $filter, $modal, bookmarkModel) {
     return bookmarksFilter($scope.bookmarks, $scope.searchText, $scope.currentOrder.value);
   }
 
+  // Show modal dialog for adding tags
+  $scope.editBookmark = function(bookmark) {
+    console.log("Edit bookmark");
+    console.log(bookmark);
+
+    var modalInstance = $modal.open({
+      scope: $scope.$new(true /* isolate */),
+      templateUrl: 'partials/editBookmark.tpl.html',
+      controller: 'editBookmarkController',
+      resolve: {
+        bookmark: function() {
+          return bookmark;
+        }
+      },
+      keyboard: true,
+      backdrop: 'static'
+    });
+
+    modalInstance.result.then(function (updatedBookmark) {
+      if (!updatedBookmark) {
+        // Bookmark was deleted
+        $scope.bookmarks.splice(_.indexOf($scope.bookmarks, bookmark), 1);
+      }
+    });
+    
+    return false;
+  };
+
   bookmarkModel.getTree(function(bookmarks) {
     console.log(bookmarks);
     $scope.bookmarkTree = bookmarks;
@@ -122,31 +150,6 @@ var TreeController = function($scope, $filter, $modal, bookmarkModel) {
   $scope.changeOrder = function(order) {
     $scope.currentOrder = order;
     resetView();
-  };
-
-  // Show modal dialog for adding tags
-  $scope.editBookmark = function(bookmark) {
-     var modalInstance = $modal.open({
-      scope: $scope.$new(true /* isolate */),
-      templateUrl: 'partials/editBookmark.tpl.html',
-      controller: 'editBookmarkController',
-      resolve: {
-        bookmark: function() {
-          return bookmark;
-        }
-      },
-      keyboard: true,
-      backdrop: 'static'
-    });
-
-    modalInstance.result.then(function (updatedBookmark) {
-      if (!updatedBookmark) {
-        // Bookmark was deleted
-        $scope.bookmarks.splice(_.indexOf($scope.bookmarks, bookmark), 1);
-      }
-    });
-    
-    return false;
   };
 
   $scope.selectBookmark = function(index) {
