@@ -84,11 +84,18 @@ ul {
 }
 
 .bookmark {
-  height:20px;
-  padding:2px;
+  height:24px;
   margin:2px;
   line-height: 20px;
   text-align: middle;
+}
+
+.bookmark_handle {
+  float:left;
+}
+
+.bookmark_content {
+  margin-left: 20px;
 }
 
 .bookmark a.bookmark-title {
@@ -102,6 +109,28 @@ ul {
 
 .bookmark:hover a.bookmark-edit {
   display:inline;
+}
+
+
+
+input[type=checkbox].tree_handle:before 
+{ 
+  content:""; 
+  display:inline-block; 
+  width:16px; 
+  height:16px; 
+}
+
+input[type=checkbox].tree_handle:checked:before { background:green; }
+
+/* images */
+input[type=checkbox].tree_handle:before { 
+  display:inline-block;
+  background: url('/images/node_closed.png') #fff;
+}
+input[type=checkbox].tree_handle:checked:before { 
+  display:inline-block;
+  background: url('/images/node_open.png') #fff;
 }
 
 /* AngularJS */

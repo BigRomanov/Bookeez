@@ -24,11 +24,13 @@ bookiesApp.directive('bookmark', function($compile) {
   var bookmarkTemplate = '<li>' +
       '<span>' +
         '<div class="bookmark"> ' +
-          '<span ng-click="bookmarkClicked(bookmark, $event)">' +
-            '<input type="checkbox" style="display:block;margin:2px;float:left;padding:2px" ng-checked="bookmark.checked"></input>' +
-          '</span>' +
-          '<a class="bookmark-title" href={{bookmark.url}} target="_blank">{{bookmark.title}}</a>' +
-          '<a class="bookmark-edit" ng-click="onEdit({bookmark:bookmark})"> <img src=images/edit.png height=20 width=20></a>' +
+          '<div class="bookmark_handle">' +
+            '<img src="images/bookmark_item.png"></img>' +
+          '</div>' +
+          '<div class="bookmark_content">' +
+            '<a class="bookmark-title" href={{bookmark.url}} target="_blank">{{bookmark.title}}</a>' +
+            '<a class="bookmark-edit" ng-click="onEdit({bookmark:bookmark})"> <img src=images/edit.png height=20 width=20></a>' +
+          '</div>' +
         '</div>' +
       '</span>' +
     '</li>';
@@ -36,11 +38,13 @@ bookiesApp.directive('bookmark', function($compile) {
   var folderTemplate = '<li>' +
       '<span>' +
         '<div class="bookmark"> ' +
-          '<span ng-click="bookmarkClicked(bookmark, $event)">' +
-            '<input type="checkbox" style="display:block;margin:2px;float:left;padding:2px" ng-checked="bookmark.checked"></input>' +
-          '</span>' +
-          '<span class="bookmark-folder">{{bookmark.title}}</span>' +
-          '<a class="bookmark-edit" ng-click="onEdit({bookmark:bookmark})"> <img src=images/edit.png height=20 width=20></a>' +
+          '<div class="bookmark_handle" ng-click="bookmarkClicked(bookmark, $event)">' +
+            '<input type="checkbox" class="tree_handle" ng-checked="bookmark.checked"></input>' +
+          '</div>' +
+          '<div class="bookmark_content">' +
+            '<span class="bookmark-folder">{{bookmark.title}}</span>' +
+            '<a class="bookmark-edit" ng-click="onEdit({bookmark:bookmark})"> <img src=images/edit.png height=20 width=20></a>' +
+          '</div>' +    
         '</div>' +
       '</span>' +
     '</li>';
