@@ -32,17 +32,6 @@ var TreeController = function($scope, $filter, $modal, bookmarkModel) {
 
   $scope.selectedIndex = 0;
 
-  // Auto add showing bookmarks when user scroll to page down
-  var loadMorePlaceholder = $('#loadMorePlaceholder').get(0);
-  $(window).scroll(function () {
-    if (getFilteredBookmarks().length > $scope.totalDisplayed) {
-      if (loadMorePlaceholder.getBoundingClientRect().top <= window.innerHeight) {
-        $scope.totalDisplayed += defaultTotalDisplayed;
-        $scope.$apply();
-      }
-    }
-  });
-
   var getAllPanels = function() {
     return $('#list-bookmarks div.panel');
   }

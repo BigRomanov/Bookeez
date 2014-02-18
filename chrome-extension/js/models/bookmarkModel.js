@@ -180,6 +180,14 @@ var BookmarkModel = function () {
       });
     });
   };
+
+
+  this.applyFilter = function(root, filter) {
+    _.each(root.children, function(bookmark) {
+      bookmark.applyFilter(filter);
+      if (bookmark.type == "")
+    });
+  }
   
 
   this.update = function(bookmark, changes) {
