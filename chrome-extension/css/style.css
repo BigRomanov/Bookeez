@@ -140,3 +140,13 @@ input[type=checkbox].tree_handle:checked:before {
 }
 
 .nav, .pagination, .carousel a { cursor: pointer; }
+
+
+/* Bootstrap */
+
+body.modal-open,
+.modal-open .navbar-fixed-top,
+.modal-open .navbar-fixed-bottom
+{
+    margin-right: 0px;
+}
