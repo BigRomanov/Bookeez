@@ -185,7 +185,10 @@ var BookmarkModel = function () {
   this.applyFilter = function(root, filter) {
     _.each(root.children, function(bookmark) {
       bookmark.applyFilter(filter);
-      if (bookmark.type == "")
+      if (bookmark.type == "folder")
+      {
+          applyFilter(bookmark, filter);
+      }
     });
   }
   
