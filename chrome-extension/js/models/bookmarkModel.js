@@ -6,28 +6,24 @@ define(
 ],
 function(_, bookiesApp) { "use strict";
 
-function BookmarkFolder(title, children) {
-  this.title = title;
-  this.checked = false;
-  this.type = "folder";
-  this.checked = false;
-  this.children = children || [];
-}
-
 function Bookmark(title, url, tag, date, id)
 {
     this.title = title;
     this.checked = false;
-    this.type  = "bookmark";
     this.checked = false;
     this.url   = url;
     this.tag   = tag;
     this.date  = date;
     this.id    = id;
+    this.children = [];
+
+    this.isFolder = function() {
+      return (this.children.length > 0);
+    }
 }
 var BookmarkModel = function () {
 
-  var rootFolder = new BookmarkFolder("Bookmarks");
+  var rootFolder = new Bookmark("Bookmarks");
   var customTagsStorage = [];
 
   /*
@@ -127,7 +123,7 @@ var BookmarkModel = function () {
                 }
                 
                 //console.log("FOLDER: " + c.title);
-                var folder = new BookmarkFolder(c.title);
+                var folder = new Bookmark(c.title);
                 root.children.push(folder);
                 
                 createBookmarks(folder, c.children, t);
@@ -180,17 +176,6 @@ var BookmarkModel = function () {
       });
     });
   };
-
-
-  this.applyFilter = function(root, filter) {
-    _.each(root.children, function(bookmark) {
-      bookmark.applyFilter(filter);
-      if (bookmark.type == "folder")
-      {
-          applyFilter(bookmark, filter);
-      }
-    });
-  }
   
 
   this.update = function(bookmark, changes) {

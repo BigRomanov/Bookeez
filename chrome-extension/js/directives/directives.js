@@ -49,19 +49,13 @@ bookiesApp.directive('bookmark', function($compile) {
       '</span>' +
     '</li>';
 
-  var getTemplate = function(contentType) {
-    var template = '';
-
-    switch(contentType) {
-        case 'folder':
-            template = folderTemplate;
-            break;
-        case 'bookmark':
-            template = bookmarkTemplate;
-            break;
+  var getTemplate = function(bookmark) {
+    if (bookmark.isFolder()) {
+      return folderTemplate;
     }
 
-    return template;
+    return bookmarkTemplate;
+
   }
 
   return { 
@@ -70,7 +64,7 @@ bookiesApp.directive('bookmark', function($compile) {
     link: function(scope, elm, attrs) {
       scope.bookmarkClicked = function(bookmark, $event) {
         bookmark.checked = !bookmark.checked;
-        if (scope.bookmark.type=="folder" && scope.bookmark.children.length > 0) {
+        if (scope.bookmark.children.length > 0) {
           if (scope.bookmark.checked == true)
           {
             var bookmarks = $compile('<bookmark-tree on-edit="onEdit({bookmark:bookmark})" ng-model="bookmark.children"></bookmark-tree>')(scope)
@@ -84,12 +78,12 @@ bookiesApp.directive('bookmark', function($compile) {
         }
       }; 
       
-      if (scope.bookmark.type=="folder" && scope.bookmark.checked == true && scope.bookmark.children.length > 0) {
+      if (scope.bookmark.checked == true && scope.bookmark.children.length > 0) {
         var bookmarks = $compile('<bookmark-tree on-edit="onEdit({bookmark:bookmark})" ng-model="bookmark.children"></bookmark-tree>')(scope)
         elm.append(bookmarks);
       }
 
-      elm.append(getTemplate(scope.bookmark.type)).show();
+      elm.append(getTemplate(scope.bookmark)).show();
       $compile(elm.contents())(scope);
     }
   };
