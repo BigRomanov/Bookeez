@@ -6,7 +6,7 @@ module.exports = function (app) {
     app.get('/', function (req, res) {
         res.render('index', {
             user : req.user,
-            titele : 'Bookies'
+            title : 'Bookies'
         });
     });
 
