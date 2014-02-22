@@ -38,15 +38,15 @@
       </div> <!--Navbar Footer End-->
 
       <!--Navbar Header-->
-      <div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+      <div ng-controller="headerController" class="navbar navbar-fixed-top navbar-inverse" role="navigation">
           <div class="container">
               <div class="navbar-header">
                   <a class="navbar-brand">Bookies</a>
               </div>
-              <form class="navbar-form navbar-left" role="search">
-                  <div class="form-group">
-                      <input type="search" class="form-control search-bookmarks" placeholder="Search" ng-model="searchText" autofocus="true">
-                  </div>
+              <form class="navbar-form navbar-left" role="search" >
+                <div class="form-group">
+                  <input type="search" class="form-control search-bookmarks" placeholder="Search" ng-model="searchText" autofocus="true">
+                </div>
               </form>
 
               <a class="navbar-text navbar-right" data-toggle="modal" data-target="#loginModal">Login</a>

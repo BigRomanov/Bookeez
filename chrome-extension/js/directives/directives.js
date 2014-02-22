@@ -78,7 +78,9 @@ bookiesApp.directive('bookmark', function($compile) {
         }
       }; 
       
-      if (scope.bookmark.checked == true && scope.bookmark.children.length > 0) {
+      //console.log(scope.bookmark);
+
+      if ((scope.bookmark.checked == true || scope.bookmark.expanded == true) && scope.bookmark.children.length > 0) {
         var bookmarks = $compile('<bookmark-tree on-edit="onEdit({bookmark:bookmark})" ng-model="bookmark.children"></bookmark-tree>')(scope)
         elm.append(bookmarks);
       }

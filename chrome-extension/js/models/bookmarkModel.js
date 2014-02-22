@@ -8,18 +8,48 @@ function(_, bookiesApp) { "use strict";
 
 function Bookmark(title, url, tag, date, id)
 {
-    this.title = title;
-    this.checked = false;
-    this.checked = false;
-    this.url   = url;
-    this.tag   = tag;
-    this.date  = date;
-    this.id    = id;
+    this.title    = title;
+    this.checked  = false;
+    this.expanded = false;
+    this.url      = url;
+    this.tag      = tag;
+    this.date     = date;
+    this.id       = id;
     this.children = [];
 
     this.isFolder = function() {
       return (this.children.length > 0);
     }
+
+    this.copy = function(src)
+    {
+      this.title    = src.title;
+      this.checked  = src.checked;
+      this.expanded = src.expanded;
+      this.url      = src.url;
+      this.tag      = src.tag;
+      this.date     = src.date;
+      this.id       = src.id;
+    }
+
+    this.inFilter = function(prefix) {
+      var self = this;
+
+      if (this.title) {
+        var words = this.title.split(" ");
+        var res = _.find(words, function(word) {
+          if (word.toLowerCase().indexOf(prefix.toLowerCase()) === 0) {
+            console.log("Title: " + self.title + " has prefix: " + prefix);
+            return true;
+          }
+          return false;
+
+        });
+      }
+      
+      return (typeof(res) !== "undefined");
+    }
+
 }
 var BookmarkModel = function () {
 
@@ -176,6 +206,44 @@ var BookmarkModel = function () {
       });
     });
   };
+
+  this.filterTree_rec = function(node, children, filter)
+  {
+    var self = this; 
+    var filteredChildren = [];
+
+    _.each(node.children, function(child) {
+      self.filterTree_rec(child, filteredChildren, filter)
+    });
+
+    if( node.inFilter(filter) || filteredChildren.length > 0)
+    {
+      console.log("Passed filter: " + node.title);
+      var newNode = new Bookmark(node.title);
+      newNode.copy(node);
+      newNode.expanded = true;
+      newNode.children = filteredChildren;
+      children.push(newNode);
+    }
+  }
+
+  this.filterTree = function(roots, filter)
+  {
+    var self = this; 
+    var filtered = []; // resulting nodes
+    
+    _.each(roots, function(node) {
+      var filteredChildren = []
+      self.filterTree_rec(node, filteredChildren, filter);
+      
+      _.each(filteredChildren, function(node) {
+        filtered.push(node);
+      });
+    });
+
+    console.log("Filtered chidlren", filtered);
+    return filtered;
+  }
   
 
   this.update = function(bookmark, changes) {

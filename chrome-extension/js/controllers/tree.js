@@ -18,7 +18,8 @@ var TreeController = function($scope, $filter, $modal, bookmarkModel) {
   var defaultTotalDisplayed = 30;
 
   $scope.searchText = ''; // Search text
-  $scope.bookmarks = []; // All bookmarks
+  
+  //$scope.bookmarks = []; // All bookmarks
   $scope.bookmarkTree = {}; // All bookmarks as tree
   $scope.orders = [ // Different sorting orders
                     {title:'Title', value: 'title'}, 
@@ -111,8 +112,7 @@ var TreeController = function($scope, $filter, $modal, bookmarkModel) {
   };
 
   bookmarkModel.getTree(function(bookmarks) {
-    console.log(bookmarks);
-    $scope.bookmarkTree = bookmarks;
+    $scope.loadedTree = bookmarks;
     $scope.$apply();
   }.bind(this));
 
@@ -126,8 +126,20 @@ var TreeController = function($scope, $filter, $modal, bookmarkModel) {
   };
 
   // When user change search string we scroll to top of the page and set total displayed items to default
-  $scope.$watch('searchText', function() {
-    resetView();
+  //$scope.$watch('searchText', function() {
+  $scope.$on('search', function(event, searchText) {
+    console.log("Search text changed");
+    console.log(searchText);
+    if (searchText)
+    {
+      $scope.bookmarkTree = bookmarkModel.filterTree($scope.bookmarkTree, searchText);
+      console.log("After filtering");
+      console.log($scope.bookmarkTree);
+    }
+    else
+    {
+      $scope.bookmarkTree = $scope.loadedTree;
+    }
   });
  
   // On tag click we set search text
