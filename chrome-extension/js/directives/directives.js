@@ -78,15 +78,16 @@ bookiesApp.directive('bookmark', function($compile) {
         }
       }; 
       
-      //console.log(scope.bookmark);
+      console.log("Render", scope.bookmark);
+
+      elm.append(getTemplate(scope.bookmark)).show();
+      $compile(elm.contents())(scope);
 
       if ((scope.bookmark.checked == true || scope.bookmark.expanded == true) && scope.bookmark.children.length > 0) {
         var bookmarks = $compile('<bookmark-tree on-edit="onEdit({bookmark:bookmark})" ng-model="bookmark.children"></bookmark-tree>')(scope)
         elm.append(bookmarks);
       }
 
-      elm.append(getTemplate(scope.bookmark)).show();
-      $compile(elm.contents())(scope);
     }
   };
 });
