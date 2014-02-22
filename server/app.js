@@ -9,7 +9,6 @@ var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
 
-//var mongoose = require('mongoose'); //comment it
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
@@ -25,6 +24,7 @@ var sqlInfo = {
 
 client = mysql.createConnection(sqlInfo);
 
+
 //app
 var app = express();
 
@@ -37,15 +37,16 @@ app.use(express.logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
-app.use(app.router); //make sure that i do not need to move this line
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(express.bodyParser());
 app.use(express.cookieParser('your secret here'));
 app.use(express.session());
+
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(app.router);
 
 app.configure('development', function(){
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
@@ -55,11 +56,44 @@ app.configure('production', function(){
     app.use(express.errorHandler());
 });
 
-// passport config
-var Account = require('./models/account');
-passport.use(new LocalStrategy(Account.authenticate()));
-passport.serializeUser(Account.serializeUser());
-passport.deserializeUser(Account.deserializeUser());
+// passport config for mysql
+
+function check_auth_user(username, password, done){
+    var sql="SELECT * FROM potluck WHERE email = '"+ username +"' and password = '"+ password +"' limit 1";
+    client.query(sql, function (err, results) {
+        if (err) {
+            return done(err);
+        }
+        else if (results[0]) {
+            return done(err, results[0])
+            console.log("I found the user!");
+        }
+        else {
+            return done(null, false, { message: 'Incorrect username or password.' });
+        }
+    });
+    //client.end();
+}
+
+passport.use(new LocalStrategy(check_auth_user));
+
+passport.serializeUser(function(res, done) {
+    done(null, res.id);
+});
+
+passport.deserializeUser(function(user, done) {
+    var sql="SELECT * FROM `potluck` WHERE email = '"+ user +"' limit 1";
+    client.query(sql, function (err, results) {
+        if (err) {
+            return done(err);
+            console.log("ERRRRRRRRRRRRRRRRRRRRR")
+        }
+        else if (results[0]) {
+            return done(err, results[0])
+        }
+    });
+    //client.end();
+});
 
 
 // mongoose
@@ -70,59 +104,19 @@ app.get('/', function(req, res){
     res.render('index', { title: 'bookeez' });
 });
 
+app.post('/login', passport.authenticate('local', {
+    failureRedirect: '/test',
+    successRedirect: '/'
+}));
+
 app.get('/login', function(req, res){
-    res.render('login', {user : req.user });
+    res.render('login');
 });
 
+//app.post('/Register', function(req,res) { }   NEED TO EDIT AND ADD
 app.get('/register', function(req, res){
     res.render('register');
 });
-
-app.post('/login', function(req,res) {
-    client.connect();
-    var user_email = req.body.email,
-        user_password = req.body.password,
-        temp_query = "SELECT * FROM potluck WHERE email = '"+ user_email +"' and password = '"+ user_password +"' limit 1";
-
-    client.query(temp_query , function(err, results) {
-
-        if (err) throw err;
-
-        if (results[0]) {
-
-            passport.serializeUser(function(results, done) {
-                done(null,results);
-            });
-
-            passport.deserializeUser(function(id, done) {
-                done(null,results);
-
-            });
-
-            var name=rows[0].name,
-                pass=rows[0].password,
-                email=rows[0].email;
-
-            res.render('test', {
-                name : name,
-                password : pass,
-                email : email
-            })
-        }
-        else {
-            res.redirect('/');
-        }
-    });
-    client.end();
-});
-
-//app.post('/register', routes.register(client));
-
-
-// routes
-//require('./routes')(app);
-
-
 
 
 app.get('/test',function(req,res) {
@@ -141,59 +135,6 @@ app.get('/test',function(req,res) {
   });
   client.end();
 });
-
-
-
-
-/*
-//brought from routes and modified for sql:
-// ! next stage is to move all the handlers, or even all this next code to routes/index.js
-
-
-//var passport = require('passport');
-//var Account = require('./models/account');
-
-app.get('/', function (req, res) {
-    res.render('index', {
-        user : req.user,
-        title : 'Bookies'
-    });
-});
-
-app.get('/register', function(req, res) {
-    res.render('register', { });
-});
-
-app.post('/register', function(req, res) {
-    Account.register(new Account({ username : req.body.username }), req.body.password, function(err, account) {
-        if (err) {
-            return res.render('register', { account : account });
-        }
-
-        passport.authenticate('local')(req, res, function () {
-            res.redirect('/');
-        });
-    });
-});
-
-app.get('/login', function(req, res) {
-    res.render('login', { user : req.user });
-});
-
-app.post('/login', passport.authenticate('local'), function(req, res) {
-    res.redirect('/');
-});
-
-app.get('/logout', function(req, res) {
-    req.logout();
-    res.redirect('/');
-});
-
-app.get('/ping', function(req, res){
-    res.send("pong!", 200);
-});
-
-*/
 
 
 http.createServer(app).listen(app.get('port'), function(){
