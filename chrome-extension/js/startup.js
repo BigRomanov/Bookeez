@@ -49,7 +49,7 @@ require([
   'ui-bootstrap', 
   'bootstrap-tagsinput',
   'bootstrap-tagsinput-angular',
-  'filters/fieldsFilter',
+  'filters/filters',
   'directives/directives',
   'controllers/tree', 
   'controllers/header', ], function($, angular) {
