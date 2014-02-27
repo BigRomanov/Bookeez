@@ -58,85 +58,76 @@ app.configure('production', function(){
 
 // passport config for mysql
 
-function check_auth_user(username, password, done){
+function findByUsername(username, password, done) {
+
     var sql="SELECT * FROM potluck WHERE email = '"+ username +"' and password = '"+ password +"' limit 1";
+
     client.query(sql, function (err, results) {
-        if (err) {
-            return done(err);
+
+        var user = results[0];
+
+        if (err) { throw err;
         }
-        else if (results[0]) {
-            return done(err, results[0])
-            console.log("I found the user!");
+        if (!user) { return done(null, false, { message: 'Unknown user ' + username });
         }
-        else {
-            return done(null, false, { message: 'Incorrect username or password.' });
+
+        if (user.password != password) { return done(null, false, { message: 'Invalid password' });
         }
+
+        passport.serializeUser(function(user, done) {
+            done(null, user);
+        });
+
+        passport.deserializeUser(function(user, done) {
+            done(null, user);
+        });
+
+        return done(null, user);
     });
-    //client.end();
-}
-
-passport.use(new LocalStrategy(check_auth_user));
-
-passport.serializeUser(function(res, done) {
-    done(null, res.id);
-});
-
-passport.deserializeUser(function(user, done) {
-    var sql="SELECT * FROM `potluck` WHERE email = '"+ user +"' limit 1";
-    client.query(sql, function (err, results) {
-        if (err) {
-            return done(err);
-            console.log("ERRRRRRRRRRRRRRRRRRRRR")
-        }
-        else if (results[0]) {
-            return done(err, results[0])
-        }
-    });
-    //client.end();
-});
+};
 
 
-// mongoose
-//mongoose.connect('mongodb://localhost/passport_local_mongoose'); //comment it later
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+        return findByUsername(username, password, done);
+    }
+));
 
+
+//gets and posts
 
 app.get('/', function(req, res){
     res.render('index', { title: 'bookeez' });
 });
 
-app.post('/login', passport.authenticate('local', {
-    failureRedirect: '/test',
-    successRedirect: '/'
-}));
+app.post('/login', function(req, res, next) {
+    passport.authenticate('local', function(err, user, info) {
+        if (err) { return next(err) }
+        if (!user) {
+            return res.redirect('/login')
+        }
+        req.logIn(user, function(err) {
+            if (err) { return next(err); }
+            return res.redirect('/');
+        });
+    })(req, res, next);
+});
+
+
 
 app.get('/login', function(req, res){
     res.render('login');
 });
 
-//app.post('/Register', function(req,res) { }   NEED TO EDIT AND ADD
+//NEED TO EDIT AND ADD
+//app.post('/Register', function(req,res) { }
+
 app.get('/register', function(req, res){
     res.render('register');
 });
 
 
-app.get('/test',function(req,res) {
-  client.connect();
-  client.query('SELECT * from potluck', function(err, rows, fields) {
-  if (err) throw err;
-    name=rows[0].name;
-    pass=rows[0].password;
-    email=rows[0].email;
-
-    res.render('test', {
-      name : name,
-      password : pass,
-      email : email
-    });
-  });
-  client.end();
-});
-
-
+//start server
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Bookies server listening on port ' + app.get('port'));
 });
