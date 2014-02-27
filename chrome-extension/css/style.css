@@ -102,12 +102,12 @@ ul {
   padding:4px;
 }
 
-.bookmark a.bookmark-edit {
+.bookmark .bookmark-context {
   display:none;
   text-decoration:none;
 }
 
-.bookmark:hover a.bookmark-edit {
+.bookmark:hover .bookmark-context {
   display:inline;
 }
 

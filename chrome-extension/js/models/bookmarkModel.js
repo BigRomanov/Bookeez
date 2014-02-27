@@ -32,6 +32,29 @@ function Bookmark(title, url, tag, date, id)
       this.id       = src.id;
     }
 
+  this.countChildrenFrom = function(node)
+    {
+      var sum = 0;
+      var self = this;
+      if (node.children.length > 0)
+      {
+        _.each(node.children, function(_node) {
+          sum += self.countChildrenFrom(_node);
+        });
+      }
+      else
+      {
+        sum = 1;
+      }
+      
+      return sum;
+    }
+   
+    this.countChildren = function()
+    {
+      return this.countChildrenFrom(this);
+    }
+
     this.inFilter = function(prefix) {
       var self = this;
 

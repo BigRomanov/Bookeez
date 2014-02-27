@@ -30,7 +30,7 @@ bookiesApp.directive('bookmark', function($compile) {
           '</div>' +
           '<div class="bookmark_content">' +
             '<a class="bookmark-title" href={{bookmark.url}} target="_blank" ng-bind-html-unsafe="bookmark.title | highlight:prefix"></a>' +
-            '<a class="bookmark-edit" ng-click="onEdit({bookmark:bookmark })"> <img src=images/edit.png height=20 width=20></a>' +
+            '<a class="bookmark-context" ng-click="onEdit({bookmark:bookmark })"> <img src=images/edit.png height=20 width=20></a>' +
           '</div>' +
         '</div>' +
       '</span>' +
@@ -44,7 +44,8 @@ bookiesApp.directive('bookmark', function($compile) {
           '</div>' +
           '<div class="bookmark_content">' +
             '<span class="bookmark-folder" ng-bind-html-unsafe="bookmark.title | highlight:prefix"></span>' +
-            '<a class="bookmark-edit" ng-click="onEdit({bookmark:bookmark})"> <img src=images/edit.png height=20 width=20></a>' +
+            '<span class="bookmark-context"> ({{bookmark.countChildren()}}) </span>' + 
+            '<a class="bookmark-context" ng-click="onEdit({bookmark:bookmark})"> <img src=images/edit.png height=20 width=20></a>' +
           '</div>' +    
         '</div>' +
       '</span>' +
