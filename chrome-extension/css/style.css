@@ -111,6 +111,10 @@ ul {
   display:inline;
 }
 
+.highlighted {
+  background-color: #ff9;
+}
+
 
 
 input[type=checkbox].tree_handle:before 

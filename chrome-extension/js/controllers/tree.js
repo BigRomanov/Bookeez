@@ -116,25 +116,16 @@ var TreeController = function($scope, $filter, $modal, bookmarkModel) {
     $scope.$apply();
   }.bind(this));
 
-  // Set maximum total displayed items to default and scroll to top of the page
-  var resetView = function() {
-    $scope.totalDisplayed = defaultTotalDisplayed;
-    $scope.selectedIndex = 0; 
-    setTimeout(function() {
-      window.scroll(0, 0);
-    }, 10);
-  };
-
-  // When user change search string we scroll to top of the page and set total displayed items to default
-  //$scope.$watch('searchText', function() {
+  // Handle search event
   $scope.$on('search', function(event, searchText) {
-    console.log("Search text changed");
-    console.log(searchText);
+    console.log("Searching:", searchText);
+
+    // In the future we might need some manipulation to get to the prefix from search string
+    $scope.searchPrefix = searchText;
+
     if (searchText)
     {
       $scope.bookmarkTree = bookmarkModel.filterTree($scope.bookmarkTree, searchText);
-      console.log("After filtering");
-      console.log($scope.bookmarkTree);
     }
     else
     {

@@ -39,7 +39,7 @@ function Bookmark(title, url, tag, date, id)
         var words = this.title.split(" ");
         var res = _.find(words, function(word) {
           if (word.toLowerCase().indexOf(prefix.toLowerCase()) === 0) {
-            console.log("Title: " + self.title + " has prefix: " + prefix);
+            //console.log("Title: " + self.title + " has prefix: " + prefix);
             return true;
           }
           return false;
@@ -218,7 +218,7 @@ var BookmarkModel = function () {
 
     if( node.inFilter(filter) || filteredChildren.length > 0)
     {
-      console.log("Passed filter: " + node.title);
+      //console.log("Passed filter: " + node.title);
       var newNode = new Bookmark(node.title);
       newNode.copy(node);
       newNode.expanded = true;
@@ -241,7 +241,6 @@ var BookmarkModel = function () {
       });
     });
 
-    console.log("Filtered chidlren", filtered);
     return filtered;
   }
   

@@ -6,12 +6,13 @@ function(bookiesApp) { 'use strict';
 
 bookiesApp.directive('bookmarkTree', function($compile) {
       return {
-        template: '<ul><bookmark ng-repeat="bookmark in bookmarkTree" onEdit="onEdit(bookmark)"></bookmark></ul>',
+        template: '<ul><bookmark ng-repeat="bookmark in bookmarkTree" onEdit="onEdit(bookmark) prefix="prefix"></bookmark></ul>',
         replace: true,
         transclude: true,
         restrict: 'E',
         scope: {
           bookmarkTree: '=ngModel',
+          prefix: "=",
           onEdit: '&'
         },
         link: function(scope, element, attrs) {
@@ -28,8 +29,8 @@ bookiesApp.directive('bookmark', function($compile) {
             '<img src="images/bookmark_item.png"></img>' +
           '</div>' +
           '<div class="bookmark_content">' +
-            '<a class="bookmark-title" href={{bookmark.url}} target="_blank">{{bookmark.title}}</a>' +
-            '<a class="bookmark-edit" ng-click="onEdit({bookmark:bookmark})"> <img src=images/edit.png height=20 width=20></a>' +
+            '<a class="bookmark-title" href={{bookmark.url}} target="_blank" ng-bind-html-unsafe="bookmark.title | highlight:prefix"></a>' +
+            '<a class="bookmark-edit" ng-click="onEdit({bookmark:bookmark })"> <img src=images/edit.png height=20 width=20></a>' +
           '</div>' +
         '</div>' +
       '</span>' +
@@ -42,7 +43,7 @@ bookiesApp.directive('bookmark', function($compile) {
             '<input type="checkbox" class="tree_handle" ng-checked="bookmark.checked"></input>' +
           '</div>' +
           '<div class="bookmark_content">' +
-            '<span class="bookmark-folder">{{bookmark.title}}</span>' +
+            '<span class="bookmark-folder" ng-bind-html-unsafe="bookmark.title | highlight:prefix"></span>' +
             '<a class="bookmark-edit" ng-click="onEdit({bookmark:bookmark})"> <img src=images/edit.png height=20 width=20></a>' +
           '</div>' +    
         '</div>' +
@@ -67,27 +68,25 @@ bookiesApp.directive('bookmark', function($compile) {
         if (scope.bookmark.children.length > 0) {
           if (scope.bookmark.checked == true)
           {
-            var bookmarks = $compile('<bookmark-tree on-edit="onEdit({bookmark:bookmark})" ng-model="bookmark.children"></bookmark-tree>')(scope)
+            var bookmarks = $compile('<bookmark-tree on-edit="onEdit({bookmark:bookmark})" ng-model="bookmark.children" prefix="prefix"></bookmark-tree>')(scope)
             elm.append(bookmarks);
           }
           else
           {
-            console.log(elm);
             $('ul',elm).remove(); 
           }
         }
       }; 
       
-      console.log("Render", scope.bookmark);
+      //console.log("Render", scope.bookmark);
 
       elm.append(getTemplate(scope.bookmark)).show();
       $compile(elm.contents())(scope);
 
       if ((scope.bookmark.checked == true || scope.bookmark.expanded == true) && scope.bookmark.children.length > 0) {
-        var bookmarks = $compile('<bookmark-tree on-edit="onEdit({bookmark:bookmark})" ng-model="bookmark.children"></bookmark-tree>')(scope)
+        var bookmarks = $compile('<bookmark-tree on-edit="onEdit({bookmark:bookmark})" ng-model="bookmark.children" prefix="prefix"></bookmark-tree>')(scope)
         elm.append(bookmarks);
       }
-
     }
   };
 });
