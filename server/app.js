@@ -70,7 +70,6 @@ function findByUsername(username, password, done) {
         }
         if (!user) { return done(null, false, { message: 'Unknown user ' + username });
         }
-
         if (user.password != password) { return done(null, false, { message: 'Invalid password' });
         }
 
@@ -96,9 +95,11 @@ passport.use(new LocalStrategy(
 
 //gets and posts
 
+
 app.get('/', function(req, res){
     res.render('index', { title: 'bookeez' });
 });
+
 
 app.post('/login', function(req, res, next) {
     passport.authenticate('local', function(err, user, info) {
@@ -108,16 +109,27 @@ app.post('/login', function(req, res, next) {
         }
         req.logIn(user, function(err) {
             if (err) { return next(err); }
-            return res.redirect('/');
+            return res.redirect('/welcome/'+user.name);
         });
     })(req, res, next);
 });
 
+app.get('/welcome/:userId',
+    function (req, res) {
+        res.render ('welcome', {
+            "user": req.user
+            // note : going directly to "www.bookeez.com/welcome/john" will end up in ERROR because user obj is undefined
+        });
+    }
+);
+
+//app.get('/login', routes.login);
 
 
 app.get('/login', function(req, res){
     res.render('login');
 });
+
 
 //NEED TO EDIT AND ADD
 //app.post('/Register', function(req,res) { }
