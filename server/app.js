@@ -8,6 +8,7 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
+var fs = require('fs');
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -46,6 +47,8 @@ app.use(express.session());
 app.use(passport.initialize());
 app.use(passport.session());
 
+//app.use(require('sesame')()); // for password reset sessions, not sure if necessary
+
 app.use(app.router);
 
 app.configure('development', function(){
@@ -83,6 +86,8 @@ function findByUsername(username, password, done) {
 
         return done(null, user);
     });
+
+    //client.end(); //need to fix this - throws error if login failed. Is this important to end connection?
 };
 
 
@@ -93,49 +98,127 @@ passport.use(new LocalStrategy(
 ));
 
 
+//password reset config
+
+var forgot = require('password-reset')({
+    uri : 'http://localhost:2000/reset',
+    from : 'password-robot@localhost',
+    host : 'localhost' //, port : 25
+});
+app.use(forgot.middleware);
+
+
 //gets and posts
 
-
 app.get('/', function(req, res){
-    res.render('index', { title: 'bookeez' });
+    res.render('index', {
+        title: 'bookeez',
+        user: req.user
+    });
 });
-
-
-app.post('/login', function(req, res, next) {
-    passport.authenticate('local', function(err, user, info) {
-        if (err) { return next(err) }
-        if (!user) {
-            return res.redirect('/login')
-        }
-        req.logIn(user, function(err) {
-            if (err) { return next(err); }
-            return res.redirect('/welcome/'+user.name);
-        });
-    })(req, res, next);
-});
-
-app.get('/welcome/:userId',
-    function (req, res) {
-        res.render ('welcome', {
-            "user": req.user
-            // note : going directly to "www.bookeez.com/welcome/john" will end up in ERROR because user obj is undefined
-        });
-    }
-);
-
-//app.get('/login', routes.login);
-
 
 app.get('/login', function(req, res){
     res.render('login');
 });
 
-
-//NEED TO EDIT AND ADD
-//app.post('/Register', function(req,res) { }
-
 app.get('/register', function(req, res){
     res.render('register');
+});
+
+app.get('/logout', function(req, res) {
+    res.render('index', {
+        "title" : 'bookeez',
+        "user" : null
+    })
+});
+
+app.get('/reset', function(req, res) {
+    res.render('reset');
+});
+
+app.get('/forgot', function(req, res) {
+    res.render('forgot');
+});
+
+app.post('/login', function(req, res, next) {
+    passport.authenticate('local',
+        function(err, user, info) {
+            if (err) { return next(err)
+            }
+            if (!user) {
+                return res.redirect('/login')
+            }
+            req.logIn(user, function(err) {
+                if (err) { return next(err);
+                }
+                return res.redirect('/');
+        });
+    })(req, res, next);
+});
+
+
+app.post('/Register', function(req, res, next) {
+    var username = req.body.username;
+    var password = req.body.password;
+
+    //verify that the user does not already exist
+    var sql = "SELECT * FROM potluck WHERE email = '"+ username +"' limit 1";
+    client.query(sql, function (err, results) {
+        if (err) { throw err;
+        }
+        if (results[0]) {
+            return res.render('register', {
+                message: 'user already exists'
+            });
+        }
+        // if username does not exist, insert user to DB
+        else {
+            sql = "INSERT INTO potluck ( email , password ) VALUES ('" + username + "','" + password +"')";
+            client.query(sql, function (err, results) {
+                if (err) { throw err;
+                }
+                // If inserted succesfully to DB, get it and redirect to login post
+                sql = "SELECT * FROM potluck WHERE email = '"+ username +"' and password = '"+ password +"' limit 1";
+                client.query(sql, function (err, results) {
+                    if (err) {throw err;
+                    }
+                    console.log('The user was inserted to DB and his name is '+username);
+                })
+            })
+        }
+    });
+    // client.release(); //should we use this?
+
+});
+
+
+// forgot password
+
+app.post('/forgot', express.bodyParser(), function (req, res) {
+    var email = req.body.email;
+    var reset = forgot(email, function (err) {
+        if (err) res.end('Error sending message: ' + err)
+        else res.end('Check your inbox for a password reset message.')
+    });
+
+    reset.on('request', function (req_, res_) {
+        req_.session.reset = { email : email, id : reset.id };
+        fs.createReadStream(__dirname + '/forgot.html').pipe(res_);
+    });
+});
+
+app.post('/reset', express.bodyParser(), function (req, res) {
+    if (!req.session.reset) return res.end('reset token not set');
+
+    var password = req.body.password;
+    var confirm = req.body.confirm;
+    if (password !== confirm) return res.end('passwords do not match');
+
+    // update the user db here
+
+    forgot.expire(req.session.reset.id);
+    delete req.session.reset;
+    res.end('password reset');
 });
 
 
