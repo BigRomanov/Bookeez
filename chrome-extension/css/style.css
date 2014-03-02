@@ -81,10 +81,11 @@ body {
 
 ul {
     list-style: none outside none;
+    display: block;
 }
 
 .bookmark {
-  height:24px;
+  /*height:24px;*/
   margin:2px;
   line-height: 20px;
   text-align: middle;
@@ -98,7 +99,29 @@ ul {
   margin-left: 20px;
 }
 
+.bookmark .bookmark-tags {
+  margin-top: 2px;
+  display: block;
+  -webkit-transition: opacity 1s ease-out;
+  opacity: 0; 
+  height: 0;
+  overflow: hidden;
+}
+
+.bookmark:hover .bookmark-tags {
+  display:block;
+  opacity: 1;
+  height: auto;
+  transition-delay: .2s !important; 
+}
+
+.bookmark-tag-input {
+  border:none;
+  background-color: #ddd;
+}
+
 .bookmark a.bookmark-title {
+  height:24px;
   padding:4px;
 }
 

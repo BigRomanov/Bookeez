@@ -3,7 +3,6 @@ define(
 ['bookiesApp'], 
 function(bookiesApp) { 'use strict';
 
-
 bookiesApp.directive('bookmarkTree', function($compile) {
       return {
         template: '<ul><bookmark ng-repeat="bookmark in bookmarkTree" onEdit="onEdit(bookmark) prefix="prefix"></bookmark></ul>',
@@ -23,7 +22,6 @@ bookiesApp.directive('bookmarkTree', function($compile) {
 
 bookiesApp.directive('bookmark', function($compile) {
   var bookmarkTemplate = '<li>' +
-      '<span>' +
         '<div class="bookmark"> ' +
           '<div class="bookmark_handle">' +
             '<img src="images/bookmark_item.png"></img>' +
@@ -31,13 +29,18 @@ bookiesApp.directive('bookmark', function($compile) {
           '<div class="bookmark_content">' +
             '<a class="bookmark-title" href={{bookmark.url}} target="_blank" ng-bind-html-unsafe="bookmark.title | highlight:prefix"></a>' +
             '<a class="bookmark-context" ng-click="onEdit({bookmark:bookmark })"> <img src=images/edit.png height=20 width=20></a>' +
+            '<div ng-show="bookmark.tagArray.length > 0" class="bookmark-tags" >' +
+                '<input type="text" class="form-control bookmark-tag-input"' + 
+                      'placeholder="Input custom tags"' +
+                      'ng-model="bookmark.tagArray"' +
+                      'tagclass="badge badge-custom"' +
+                      'bootstrap-tagsinput>'+
+             '</div>' +
           '</div>' +
         '</div>' +
-      '</span>' +
     '</li>';
 
   var folderTemplate = '<li>' +
-      '<span>' +
         '<div class="bookmark"> ' +
           '<div class="bookmark_handle" ng-click="bookmarkClicked(bookmark, $event)">' +
             '<input type="checkbox" class="tree_handle" ng-checked="bookmark.checked"></input>' +
@@ -48,7 +51,6 @@ bookiesApp.directive('bookmark', function($compile) {
             '<a class="bookmark-context" ng-click="onEdit({bookmark:bookmark})"> <img src=images/edit.png height=20 width=20></a>' +
           '</div>' +    
         '</div>' +
-      '</span>' +
     '</li>';
 
   var getTemplate = function(bookmark) {
@@ -80,6 +82,7 @@ bookiesApp.directive('bookmark', function($compile) {
       }; 
       
       //console.log("Render", scope.bookmark);
+      scope.bookmark.tagArray = _.map(scope.bookmark.tags, function(t) { return t.text }),
 
       elm.append(getTemplate(scope.bookmark)).show();
       $compile(elm.contents())(scope);

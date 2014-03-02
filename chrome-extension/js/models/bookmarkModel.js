@@ -6,13 +6,14 @@ define(
 ],
 function(_, bookiesApp) { "use strict";
 
-function Bookmark(title, url, tag, date, id)
+function Bookmark(title, url, date, id, tags, folders)
 {
     this.title    = title;
     this.checked  = false;
     this.expanded = false;
     this.url      = url;
-    this.tag      = tag;
+    this.tags     = tags;
+    this.folders  = folders;
     this.date     = date;
     this.id       = id;
     this.children = [];
@@ -27,7 +28,8 @@ function Bookmark(title, url, tag, date, id)
       this.checked  = src.checked;
       this.expanded = src.expanded;
       this.url      = src.url;
-      this.tag      = src.tag;
+      this.tags     = src.tags;
+      this.folder   = src.folders;
       this.date     = src.date;
       this.id       = src.id;
     }
@@ -159,18 +161,18 @@ var BookmarkModel = function () {
     var chunk = _.find(customTagsStorage, function(chunk) { return _.isArray(chunk.d[bookmark.url]); });
     if (chunk) {
       _.each(chunk.d[bookmark.url], function(tag){
-        bookmark.tag.push({text: tag, custom: true});
+        bookmark.tags.push({text: tag});
       });
     }
   }
   
-  var createBookmarks = function(root, tree, tags) {
+  var createBookmarks = function(root, tree, folders) {
       
       if (tree) {
         _.each(tree, function(c) {
             if (!c.url) {
                 
-                var t = tags.slice();
+                var t = folders.slice();
                 if (c.title) {
                     t.push(c.title);
                 }
@@ -183,10 +185,10 @@ var BookmarkModel = function () {
             } 
             else {
                 //console.log("BOOKMARK: " + c.title);
-                var bookmark = new Bookmark(c.title, c.url, [], c.dateAdded, c.id);
+                var bookmark = new Bookmark(c.title, c.url, c.dateAdded, c.id, [], []);
                 
-                _.each(tags, function(tag) {
-                  bookmark.tag.push({text: tag, custom: false});
+                _.each(folders, function(folder) {
+                  bookmark.folders.push({text: folder});
                 });
 
                 fillBookmarkWithCustomTags(bookmark);
@@ -204,7 +206,7 @@ var BookmarkModel = function () {
   var fillCustomTags = function(bookmarks, customTags) {
     _.each(bookmarks, function(bookmark) {
       // Remove all custom tags from bookmark first
-      bookmarks.tag = _.filter(bookmarks.tag, function (t) { return t.custom === false });
+      // bookmarks.tag = _.filter(bookmarks.tag, function (t) { return t.custom === false });
       saveCustomTags(bookmark.url, customTags[bookmark.url]);
     });
   };
@@ -275,7 +277,7 @@ var BookmarkModel = function () {
     }
 
     removeCustomTags(bookmark.url);
-    bookmark.tag = _.filter(bookmark.tag, function(t) { return t.custom === false });
+    // bookmark.tag = _.filter(bookmark.tag, function(t) { return t.custom === false });
     if (changes.customTags && changes.customTags.length > 0) {
       saveCustomTags(bookmark.url, changes.customTags);
       fillBookmarkWithCustomTags(bookmark);
