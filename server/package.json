@@ -8,11 +8,10 @@
   "dependencies": {
     "express": "3.4.7",
     "jade": "*",
-    "mongodb": "*",
-    "mongoose": "*",
     "passport": "*",
     "passport-local": "*",
-    "passport-local-mongoose": "*",
-    "mysql": "*"
+    "mysql": "*",
+    "nodemailer": "*",
+    "password-reset-nodemailer": "*"
   }
 }

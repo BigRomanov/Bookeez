@@ -47,7 +47,7 @@ app.use(express.session());
 app.use(passport.initialize());
 app.use(passport.session());
 
-//app.use(require('sesame')()); // for password reset sessions, not sure if necessary
+// app.use(require('sesame')()); // for password reset sessions, not sure if necessary
 
 app.use(app.router);
 
@@ -62,31 +62,23 @@ app.configure('production', function(){
 // passport config for mysql
 
 function findByUsername(username, password, done) {
-
     var sql="SELECT * FROM potluck WHERE email = '"+ username +"' and password = '"+ password +"' limit 1";
-
     client.query(sql, function (err, results) {
-
         var user = results[0];
-
         if (err) { throw err;
         }
         if (!user) { return done(null, false, { message: 'Unknown user ' + username });
         }
         if (user.password != password) { return done(null, false, { message: 'Invalid password' });
         }
-
         passport.serializeUser(function(user, done) {
             done(null, user);
         });
-
         passport.deserializeUser(function(user, done) {
             done(null, user);
         });
-
         return done(null, user);
     });
-
     //client.end(); //need to fix this - throws error if login failed. Is this important to end connection?
 };
 
@@ -97,13 +89,19 @@ passport.use(new LocalStrategy(
     }
 ));
 
-
 //password reset config
 
-var forgot = require('password-reset')({
-    uri : 'http://localhost:2000/reset',
-    from : 'password-robot@localhost',
-    host : 'localhost' //, port : 25
+var forgot = require('password-reset-nodemailer')({
+    uri: 'http://localhost:2000/password_reset',
+    from: 'password-robot@localhost',
+    transportType: 'SMTP',
+    transportOptions: {
+        service: "Gmail",
+        auth: {
+            user: "some.user@gmail.com", //change that
+            pass: "passpasspass" //change this
+        }
+    }
 });
 app.use(forgot.middleware);
 
@@ -156,7 +154,6 @@ app.post('/login', function(req, res, next) {
     })(req, res, next);
 });
 
-
 app.post('/Register', function(req, res, next) {
     var username = req.body.username;
     var password = req.body.password;
@@ -194,20 +191,29 @@ app.post('/Register', function(req, res, next) {
 
 // forgot password
 
-app.post('/forgot', express.bodyParser(), function (req, res) {
+app.post('/forgot', express.bodyParser(), function(req, res) {
     var email = req.body.email;
-    var reset = forgot(email, function (err) {
-        if (err) res.end('Error sending message: ' + err)
-        else res.end('Check your inbox for a password reset message.')
-    });
 
-    reset.on('request', function (req_, res_) {
-        req_.session.reset = { email : email, id : reset.id };
-        fs.createReadStream(__dirname + '/forgot.html').pipe(res_);
+    var callback = {
+        error: function(err) {
+            res.end('Error sending message: ' + err);
+        },
+        success: function(success) {
+            res.end('Check your inbox for a password reset message.');
+        }
+    };
+    var reset = forgot(email, callback);
+
+    reset.on('request', function(req_, res_) {
+        req_.session.reset = {
+            email: email,
+            id: reset.id
+        };
+        fs.createReadStream(__dirname + '/views/forgot').pipe(res_);
     });
 });
 
-app.post('/reset', express.bodyParser(), function (req, res) {
+app.post('/reset', express.bodyParser(), function(req, res) {
     if (!req.session.reset) return res.end('reset token not set');
 
     var password = req.body.password;
@@ -220,6 +226,8 @@ app.post('/reset', express.bodyParser(), function (req, res) {
     delete req.session.reset;
     res.end('password reset');
 });
+
+
 
 
 //start server
