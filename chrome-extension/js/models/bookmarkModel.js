@@ -35,7 +35,12 @@ function Bookmark(title, url, dateAdded, id, index, parentId, tags)
     // TODO: Refactor to use dependency injection
 
     this.updateTitle = function() {
+      console.log("updateTitle", this.id, this.title);
       chrome.bookmarks.update(this.id, { title: this.title});
+    }
+
+    this.updateUrl = function() {
+      chrome.bookmarks.update(this.id, { title: this.url});
     }
 
     this.copy = function(src) {

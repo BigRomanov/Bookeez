@@ -105,6 +105,34 @@ ul {
   border:none;
 }
 
+.bookmark .inlineEditor span {
+  cursor: pointer;
+}
+
+.bookmark .inlineEditor a {
+  cursor: pointer;
+}
+
+.bookmark .inlineEditor input {
+  display: none;
+}
+
+.bookmark .inlineEditor.active span {
+  display: none;
+}
+
+.bookmark .inlineEditor.active a {
+  display: none;
+}
+
+.bookmark .inlineEditor.active span {
+  display: none;
+}
+
+.bookmark .inlineEditor.active input {
+  display: inline-block;
+}
+
 .bookmark_content {
   margin-left: 20px;
 }
