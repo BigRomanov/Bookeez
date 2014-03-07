@@ -6,76 +6,105 @@ define(
 ],
 function(_, bookiesApp) { "use strict";
 
-function Bookmark(title, url, date, id, tags, folders)
+function Bookmark(title, url, dateAdded, id, index, parentId, tags)
 {
-    this.title    = title;
-    this.checked  = false;
-    this.expanded = false;
-    this.url      = url;
-    this.tags     = tags;
-    this.folders  = folders;
-    this.date     = date;
-    this.id       = id;
-    this.children = [];
+    // Chrome bookmark and folder fields
+    this.title     = title;
+    this.url       = url;  // only for bookmark
+    this.dateAdded = dateAdded;
+    this.id        = id;
+    this.index     = index;
+    this.parentId  = parentId;
+    this.children  = [];
+
+    this.checked   = false;
+    this.expanded  = false;
+
+    this.tags      = tags;
+    this.folders   = [];
 
     this.isFolder = function() {
       return (this.children.length > 0);
     }
 
-    this.copy = function(src)
+    this.saveTags = function() {
+      console.log("bookmark.saveTags");
+    }
+
+    // Methods to interact with chrome.bookmarks API
+    // TODO: Refactor to use dependency injection
+
+    this.updateTitle = function() {
+      chrome.bookmarks.update(this.id, { title: this.title});
+    }
+
+    this.copy = function(src) {
+      // Chrome bookmark and folder fields
+      this.title     = src.title;
+      this.url       = src.url;  // only for bookmark
+      this.dateAdded = src.dateAdded;
+      this.id        = src.id;
+      this.index     = src.index;
+      this.parentId  = src.parentId;
+      this.children  = src.children;
+
+      this.checked   = src.checked;
+      this.expanded  = src.expanded;
+
+      this.tags      = tags;
+      this.folders   = src.folders;
+    }
+
+
+  // Count all children from given node and down the tree
+  this.countChildrenFrom = function(node) {
+    var sum = 0;
+    var self = this;
+    if (node.children.length > 0)
     {
-      this.title    = src.title;
-      this.checked  = src.checked;
-      this.expanded = src.expanded;
-      this.url      = src.url;
-      this.tags     = src.tags;
-      this.folder   = src.folders;
-      this.date     = src.date;
-      this.id       = src.id;
+      _.each(node.children, function(_node) {
+        sum += self.countChildrenFrom(_node);
+      });
     }
-
-  this.countChildrenFrom = function(node)
+    else
     {
-      var sum = 0;
-      var self = this;
-      if (node.children.length > 0)
-      {
-        _.each(node.children, function(_node) {
-          sum += self.countChildrenFrom(_node);
-        });
-      }
-      else
-      {
-        sum = 1;
-      }
-      
-      return sum;
+      sum = 1;
     }
-   
-    this.countChildren = function()
-    {
-      return this.countChildrenFrom(this);
+    
+    return sum;
+  }
+  
+  // Count all children from current folder down
+  this.countChildren = function() {
+    return this.countChildrenFrom(this);
+  }
+
+  // Check whether node contains given prefix
+  this.inFilter = function(prefix) {
+    var self = this;
+
+    if (this.title) {
+      var words = this.title.split(" ");
+      var res = _.find(words, function(word) {
+        if (word.toLowerCase().indexOf(prefix.toLowerCase()) === 0) {
+          //console.log("Title: " + self.title + " has prefix: " + prefix);
+          return true;
+        }
+        return false;
+
+      });
     }
-
-    this.inFilter = function(prefix) {
-      var self = this;
-
-      if (this.title) {
-        var words = this.title.split(" ");
-        var res = _.find(words, function(word) {
-          if (word.toLowerCase().indexOf(prefix.toLowerCase()) === 0) {
-            //console.log("Title: " + self.title + " has prefix: " + prefix);
-            return true;
-          }
-          return false;
-
-        });
-      }
-      
-      return (typeof(res) !== "undefined");
-    }
+    
+    return (typeof(res) !== "undefined");
+  }
 
 }
+
+// TODO: Implement separate data model for tags
+var TagStore = function(id) {
+  var storage = []; // chunked storage
+}
+
 var BookmarkModel = function () {
 
   var rootFolder = new Bookmark("Bookmarks");
@@ -88,6 +117,7 @@ var BookmarkModel = function () {
     var change = {};
     var key = 't' + index;
     change[key] = chunk;
+    console.log("Save chunk to storage", change);
     chrome.storage.sync.set(change);
   }
 
@@ -144,6 +174,7 @@ var BookmarkModel = function () {
       index++;
       var key = 't' + index;
       chrome.storage.sync.get(key, function(data) {
+        console.log("Retrieved from storage", data);
         if (data[key]) {
           customTagsStorage.push(data[key]);
         }
@@ -160,7 +191,7 @@ var BookmarkModel = function () {
   var fillBookmarkWithCustomTags = function(bookmark) {
     var chunk = _.find(customTagsStorage, function(chunk) { return _.isArray(chunk.d[bookmark.url]); });
     if (chunk) {
-      _.each(chunk.d[bookmark.url], function(tag){
+      _.each(chunk.d[bookmark.url], function(tag) {
         bookmark.tags.push({text: tag});
       });
     }
@@ -177,15 +208,15 @@ var BookmarkModel = function () {
                     t.push(c.title);
                 }
                 
-                //console.log("FOLDER: " + c.title);
-                var folder = new Bookmark(c.title);
+                //console.log("FOLDER", c);
+                var folder = new Bookmark(c.title, "", c.dateAdded, c.id, c.index, c.parentId, []);
                 root.children.push(folder);
                 
                 createBookmarks(folder, c.children, t);
             } 
             else {
-                //console.log("BOOKMARK: " + c.title);
-                var bookmark = new Bookmark(c.title, c.url, c.dateAdded, c.id, [], []);
+                //console.log("BOOKMARK", c);
+                var bookmark = new Bookmark(c.title, c.url, c.dateAdded, c.id, c.index, c.parentId, []);
                 
                 _.each(folders, function(folder) {
                   bookmark.folders.push({text: folder});

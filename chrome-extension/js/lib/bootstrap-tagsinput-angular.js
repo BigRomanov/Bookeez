@@ -18,41 +18,35 @@ angular.module('bootstrap-tagsinput', [])
     scope: {
       model: '=ngModel'
     },
+    template: '<select multiple></select>',
     replace: false,
     link: function(scope, element, attrs) {
       $(function() {
+        console.log(scope.model);
         if (!angular.isArray(scope.model))
           scope.model = [];
 
-        var item = $(element);
+        var select = $('select', element);
 
-
-        var inputClass = item.attr('class');
-
-        item.tagsinput({
+        select.tagsinput({
           typeahead : {
             source   : angular.isFunction(scope.$parent[attrs.typeaheadSource]) ? scope.$parent[attrs.typeaheadSource] : null
           },
           itemValue: getItemProperty(scope, attrs.itemvalue),
           itemText : getItemProperty(scope, attrs.itemtext),
-          tagClass : angular.isFunction(scope.$parent[attrs.tagclass]) ? scope.$parent[attrs.tagclass] : function(item) { return attrs.tagclass; },
-          confirmKeys: [188,186,13]
+          tagClass : angular.isFunction(scope.$parent[attrs.tagclass]) ? scope.$parent[attrs.tagclass] : function(item) { return attrs.tagclass; }
         });
 
-        if (inputClass) {
-          item.next().addClass(inputClass);
-        }
-
         for (var i = 0; i < scope.model.length; i++) {
-          item.tagsinput('add', scope.model[i]);
+          select.tagsinput('add', scope.model[i]);
         }
 
-        item.on('itemAdded', function(event) {
+        select.on('itemAdded', function(event) {
           if (scope.model.indexOf(event.item) === -1)
             scope.model.push(event.item);
         });
 
-        item.on('itemRemoved', function(event) {
+        select.on('itemRemoved', function(event) {
           var idx = scope.model.indexOf(event.item);
           if (idx !== -1)
             scope.model.splice(idx, 1);
@@ -70,26 +64,16 @@ angular.module('bootstrap-tagsinput', [])
 
           // Remove tags no longer in binded model
           for (i = 0; i < removed.length; i++) {
-            item.tagsinput('remove', removed[i]);
+            select.tagsinput('remove', removed[i]);
           }
 
           // Refresh remaining tags
-          item.tagsinput('refresh');
+          select.tagsinput('refresh');
 
           // Add new items in model as tags
           for (i = 0; i < added.length; i++) {
-            item.tagsinput('add', added[i]);
+            select.tagsinput('add', added[i]);
           }
-
-          item
-            .tagsinput('input')
-            .focusout(function() {
-              var lastTag = $(this).val();
-              if (lastTag) {
-                item.tagsinput('add', lastTag);
-                $(this).val('');
-              }
-            });
         }, true);
       });
     }

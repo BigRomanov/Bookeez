@@ -42,6 +42,7 @@ var TreeController = function($scope, $filter, $modal, bookmarkModel) {
     return rect.top >= 0 && rect.left >= 0 && rect.bottom <= $(window).height() && rect.right <= $(window).width();
   }
 
+  /*
   // Key down events handlers
   $('#mainContent').keydown(function(e) {
     var updated = false;
@@ -76,6 +77,7 @@ var TreeController = function($scope, $filter, $modal, bookmarkModel) {
       return false;
     }
   });
+*/
 
   // Get bookmarks we show on the page (in right order)
   var getFilteredBookmarks = function() {

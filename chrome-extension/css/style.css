@@ -95,6 +95,16 @@ ul {
   float:left;
 }
 
+.bookmark input[type="checkbox"] {
+  margin: 0;
+}
+
+.bookmark .inlineEditor {
+  height: 20px;
+  line-height: 20px;
+  border:none;
+}
+
 .bookmark_content {
   margin-left: 20px;
 }

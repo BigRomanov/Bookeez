@@ -5,7 +5,8 @@ require.config({
   paths: {
     underscore: 'lib/underscore.min',
     jQuery: 'lib/jquery-2.0.3.min',
-    angular: 'lib/angular.min',
+    angular: 'lib/angular',
+    angularRoute: 'lib/angular-route',
     bootstrap: 'lib/bootstrap.min',
     'ui-bootstrap': 'lib/ui-bootstrap-custom-tpls-0.6.0-SNAPSHOT.min',
     controllers: 'controllers',
@@ -24,6 +25,9 @@ require.config({
     'angular': {
       deps: ['jQuery'],
       exports : 'angular'
+    },
+    'angularRoute': {
+      deps: ['angular'],
     },
     'bootstrap': {
       deps: ['jQuery'],
@@ -45,6 +49,7 @@ require.config({
 require([
   'jQuery', 
   'angular', 
+  'angularRoute', 
   'bootstrap', 
   'ui-bootstrap', 
   'bootstrap-tagsinput',
