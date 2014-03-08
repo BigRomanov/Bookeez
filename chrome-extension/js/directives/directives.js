@@ -6,8 +6,12 @@ function(bookiesApp) { 'use strict';
 
 bookiesApp.directive( 'inlineEditor', function($compile, $timeout) {
 
-  var textTemplate  = '<span ng-bind="value" ng-click="edit()" ></span><input ng-model="value" ng-blur="done()"></input>';
-  var urlTemplate = '<a src="value" ng-bind="value" ng-click="edit()" ></a><input ng-model="value" ng-blur="done()"></input>';
+  // TODO: Prefix highlighting is currently hard coded into the editor, we should consider refactoring this
+  var textTemplate  = '<span ng-bind="value| highlight:prefix" ng-click="edit()" >'+
+                      '</span><input ng-model="value" ng-blur="done()"></input>';
+  
+  var urlTemplate   = '<a src="value" ng-bind="value | highlight:prefix" ng-click="edit()" ></a>'+
+                      '<input ng-model="value" ng-blur="done()"></input>';
 
   return {
     restrict: 'E',
@@ -23,22 +27,19 @@ bookiesApp.directive( 'inlineEditor', function($compile, $timeout) {
       $scope.editing = false;
 
       var getTemplate = function(attrs) {
-        console.log(attrs);
         return 'url' in attrs ? urlTemplate : textTemplate;
       }
       
       // ng-click handler to activate edit-in-place
       $scope.edit = function () {
-        console.log("Inline editor", "editing...");
         $scope.editing = true;
         element.addClass( 'active' );
         $timeout(function() { 
           $scope.input.focus();
-         },0);
+        },0);
       };
       
       $scope.done = function() {
-        console.log("Inline editor", "done...");
         $scope.editing = false;
         element.removeClass( 'active' );
         $scope.update();
@@ -47,8 +48,7 @@ bookiesApp.directive( 'inlineEditor', function($compile, $timeout) {
       element.append(getTemplate(attrs)).show();
       $compile(element.contents())($scope);
 
-      $scope.input = $("input:text", element.contents());
-      console.log($scope.input);
+      $scope.input = $(element).find("input")[0];
     }
   };
 });
@@ -102,18 +102,7 @@ bookiesApp.directive('bookmark', function($compile, $timeout) {
           '</div>' +
           // content
           '<div class="bookmark_content" style="float:left" ng-init="isEditing=false">' +
-
-            '<div>' + // title
-              // viewer mode
-              '<div ng-hide="isEditing"  ng-click="edit()" ' +
-                  'ng-bind="bookmark.title | highlight:prefix" class="bookmark-folder" >'+
-              '</div>' +
-              // editor mode
-              '<div ng-show="isEditing" >' +
-                '<input ng-model="bookmark.title" ng-change="bookmark.updateTitle()" ng-blur="closeEditor()" class="inlineEditor"></input>' +
-              '</div>' +
-            '</div>' + // ~title
-
+            '<inline-editor value="bookmark.title" update="bookmark.updateTitle()"></inline-editor>' +
           '</div>' +  // ~content
           // actions (not visible in editor)
           '<div ng-hide="isEditing" class="bookmark_actions bookmark-context" style="float:left"> ({{bookmark.countChildren()}}) </div>' + 
@@ -149,24 +138,8 @@ bookiesApp.directive('bookmark', function($compile, $timeout) {
         }
       }; 
 
-      scope.edit = function()
-      {
-        console.log("Edit...", scope.input);
-        scope.isEditing = true;
-        $timeout(function() { 
-          scope.input.focus();
-         },0);
-      }
-
-      scope.closeEditor = function()
-      {
-        scope.isEditing = false;
-      }
-
       elm.append(getTemplate(scope.bookmark)).show();
       $compile(elm.contents())(scope);
-
-      scope.input = $("input:text", elm.contents());
 
       if ((scope.bookmark.checked == true || scope.bookmark.expanded == true) && scope.bookmark.children.length > 0) {
         var bookmarks = $compile('<bookmark-tree on-edit="onEdit({bookmark:bookmark})" ng-model="bookmark.children" prefix="prefix"></bookmark-tree>')(scope)

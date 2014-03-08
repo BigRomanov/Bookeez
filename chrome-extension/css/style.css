@@ -99,12 +99,6 @@ ul {
   margin: 0;
 }
 
-.bookmark .inlineEditor {
-  height: 20px;
-  line-height: 20px;
-  border:none;
-}
-
 .bookmark .inlineEditor span {
   cursor: pointer;
 }
@@ -115,6 +109,9 @@ ul {
 
 .bookmark .inlineEditor input {
   display: none;
+  height: 20px;
+  line-height: 20px;
+  border:none;
 }
 
 .bookmark .inlineEditor.active span {
