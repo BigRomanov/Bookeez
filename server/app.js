@@ -98,8 +98,8 @@ var forgot = require('password-reset-nodemailer')({
     transportOptions: {
         service: "Gmail",
         auth: {
-            user: "some.user@gmail.com", //change that
-            pass: "passpasspass" //change this
+            user: "email here", //change that
+            pass: "password here" //change this
         }
     }
 });
@@ -180,6 +180,10 @@ app.post('/Register', function(req, res, next) {
                     if (err) {throw err;
                     }
                     console.log('The user was inserted to DB and his name is '+username);
+                    res.render('index', {
+                        user: results[0]
+                    });
+                    // IMPORTANT!! NEED TO ADD VERIFICATION VIA EMAIL FOR EVERY REGISTERED USER!
                 })
             })
         }
@@ -206,21 +210,31 @@ app.post('/forgot', express.bodyParser(), function(req, res) {
 
     reset.on('request', function(req_, res_) {
         req_.session.reset = {
-            email: email,
-            id: reset.id
+           email: email,
+           id: reset.id
         };
-        fs.createReadStream(__dirname + '/views/forgot').pipe(res_);
+        fs.createReadStream(__dirname + '/views/forgot.jade').pipe(res_);
+        res_.render('forgot', {
+            email: email
+        });
     });
 });
 
 app.post('/reset', express.bodyParser(), function(req, res) {
     if (!req.session.reset) return res.end('reset token not set');
 
+    var email = req.body.email;
+    console.log('email is :' +email);
     var password = req.body.password;
     var confirm = req.body.confirm;
     if (password !== confirm) return res.end('passwords do not match');
 
     // update the user db here
+    var sql = "UPDATE `potluck` SET `password` = '" + password + "' WHERE `potluck`.`email` ='" + email + "'";
+    client.query(sql, function (err, results) {
+        if (err) { throw err;
+        }
+    })
 
     forgot.expire(req.session.reset.id);
     delete req.session.reset;
