@@ -91,8 +91,26 @@ ul {
   text-align: middle;
 }
 
+.folder_handle {
+  float:left;
+  background-image: url("chrome-extension://__MSG_@@extension_id__/images/node_closed.png");
+  height: 20px;
+  width: 20px;
+}
+
+.folder_handle:hover {
+   background-image: url("chrome-extension://__MSG_@@extension_id__/images/edit.png");
+}
+
 .bookmark_handle {
   float:left;
+  background-image: url("chrome-extension://__MSG_@@extension_id__/images/bookmark_item.png");
+  height: 20px;
+  width: 20px;
+}
+
+.bookmark_handle:hover {
+   background-image: url("chrome-extension://__MSG_@@extension_id__/images/edit.png");
 }
 
 .bookmark input[type="checkbox"] {

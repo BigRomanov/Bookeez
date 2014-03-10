@@ -43,6 +43,10 @@ function Bookmark(title, url, dateAdded, id, index, parentId, tags)
       chrome.bookmarks.update(this.id, { title: this.url});
     }
 
+    this.updateTags = function() {
+      console.log("Tags updated", this.tags);
+    }
+
     this.copy = function(src) {
       // Chrome bookmark and folder fields
       this.title     = src.title;

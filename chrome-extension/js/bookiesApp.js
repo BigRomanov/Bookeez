@@ -5,7 +5,7 @@ define(
 ], 
 function(angular) { 'use strict';
 
-var app =  angular.module('bookiesApp', ['ui.bootstrap', 'bootstrap-tagsinput', 'ngRoute']);
+var app =  angular.module('bookiesApp', ['ui.bootstrap', 'bootstrap-tagsinput', 'ngRoute',  'ngTagsInput']);
 
 app.config(['$routeProvider', function($routeProvider) {
    $routeProvider.when('/tree', {templateUrl: 'partials/tree.tpl.html', controller: 'treeController'});

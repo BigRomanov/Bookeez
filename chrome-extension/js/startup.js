@@ -13,7 +13,8 @@ require.config({
     filters: 'filters',
     models: 'models',
     'bootstrap-tagsinput': 'lib/bootstrap-tagsinput.min',
-    'bootstrap-tagsinput-angular': 'lib/bootstrap-tagsinput-angular'
+    'bootstrap-tagsinput-angular': 'lib/bootstrap-tagsinput-angular',
+    'ng-tags-input' : 'lib/ng-tags-input'
   },
   shim: {
     'jQuery': {
@@ -42,6 +43,9 @@ require.config({
     },
     'bootstrap-tagsinput-angular': {
       deps: ['bootstrap-tagsinput', 'angular']
+    },
+    'ng-tags-input' : {
+      deps: ['angular'],
     }
   }
 });
@@ -54,6 +58,7 @@ require([
   'ui-bootstrap', 
   'bootstrap-tagsinput',
   'bootstrap-tagsinput-angular',
+  'ng-tags-input',
   'filters/filters',
   'directives/directives',
   'controllers/tree', 

@@ -7,11 +7,15 @@ function(bookiesApp) { 'use strict';
 bookiesApp.directive( 'inlineEditor', function($compile, $timeout) {
 
   // TODO: Prefix highlighting is currently hard coded into the editor, we should consider refactoring this
-  var textTemplate  = '<span ng-bind="value| highlight:prefix" ng-click="edit()" >'+
-                      '</span><input ng-model="value" ng-blur="done()"></input>';
+  var textTemplate  = '<div>' +
+                        '<span ng-bind="value| highlight:prefix" ng-click="edit()" >'+
+                        '</span><input ng-model="value" ng-blur="done()"></input>' +
+                      '</div>';
   
-  var urlTemplate   = '<a src="value" ng-bind="value | highlight:prefix" ng-click="edit()" ></a>'+
-                      '<input ng-model="value" ng-blur="done()"></input>';
+  var urlTemplate   = '<div>' +
+                        '<a src="value" ng-bind="value | highlight:prefix" ng-click="edit()" ></a>'+
+                        '<input ng-model="value" ng-blur="done()"></input>' +
+                      '</div>';
 
   return {
     restrict: 'E',
@@ -75,21 +79,27 @@ bookiesApp.directive('bookmark', function($compile, $timeout) {
   var bookmarkTemplate = '<li>' +
         '<div class="bookmark"> ' +
           // handle
-          '<div class="bookmark_handle"> <img src="images/bookmark_item.png"></img> </div>' +
+          '<div class="bookmark_handle" ng-click="editorActive = !editorActive"> '+
+          '</div>' +
           //content
-          '<div class="bookmark_content" ng-init="isEditing=false">' +
+          '<div class="bookmark_content">' +
 
-            '<inline-editor value="bookmark.title" update="bookmark.updateTitle()"></inline-editor>' +
-            '(<inline-editor url value="bookmark.url"  update="bookmark.updateUrl()">  </inline-editor>)' +
+            // editor
+            '<div ng-show="editorActive">' +
 
-            // tags
-            '<div ng-blur="bookmark.saveTags()" ng-show="bookmark.tags.length > 0" class="bookmark-tags" >' +
-                '<input type="text" class="form-control bookmark-tag-input"' + 
-                      'placeholder="Input custom tags"' +
-                      'ng-model="bookmark.tags"' +
-                      'tagclass="badge badge-custom"' +
-                      'bootstrap-tagsinput>'+
-             '</div>' +
+              '<inline-editor value="bookmark.title" update="bookmark.updateTitle()"></inline-editor>' +
+              '<inline-editor url value="bookmark.url"  update="bookmark.updateUrl()">  </inline-editor>' +
+              
+              '<div class="bookmark-tags" >' +
+                '<tags-input on-tag-added="bookmark.updateTags()" ng-model="bookmark.tags"></tags-input>' +
+              '</div>' +
+            '</div>' +
+
+            // view
+            '<div ng-hide="editorActive">' + 
+              '<a class="bookmark-title" href={{bookmark.url}} target="_blank" ng-bind="bookmark.title | highlight:prefix"></a>' 
+            '</div>'
+            
           '</div>' +
         '</div>' +
     '</li>';
@@ -100,6 +110,7 @@ bookiesApp.directive('bookmark', function($compile, $timeout) {
           '<div class="bookmark_handle" ng-click="expand(bookmark, $event)">' +
             '<input type="checkbox" class="tree_handle" ng-checked="bookmark.checked"></input>' +
           '</div>' +
+          
           // content
           '<div class="bookmark_content" style="float:left" ng-init="isEditing=false">' +
             '<inline-editor value="bookmark.title" update="bookmark.updateTitle()"></inline-editor>' +
