@@ -9,7 +9,9 @@ html
     body
     .container
         h1 Reset your password
-        p.lead password reset for user #{email}
+        p.lead password reset for #{email}
+        br
+        p #{message}
         br
         form(role='form', action="/reset",method="post", style='max-width: 300px;')
             .form-group

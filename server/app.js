@@ -97,8 +97,8 @@ var forgot = require('password-reset-nodemailer')({
     transportOptions: {
         service: "Gmail",
         auth: {
-            user: "lirco77@gmail.com", //change that
-            pass: "ggoldenpi1618e" //change this
+            user: "hey hey", //change that
+            pass: "yo yo" //change this
         }
     }
 });
@@ -116,8 +116,9 @@ app.post('/login', routes.login(passport));
 app.post('/Register', routes.register);
 
 // forgot password
-app.post('/forgot', express.bodyParser(), routes.forgot(forgot));
-app.post('/reset', express.bodyParser(), routes.reset(forgot));
+//app.post('/forgot', express.bodyParser(), routes.forgot(forgot));
+//app.post('/reset', express.bodyParser(), routes.reset(forgot));
+app.post('/forgot', routes.forgot);
 
 //start server
 http.createServer(app).listen(app.get('port'), function(){
