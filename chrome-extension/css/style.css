@@ -88,7 +88,7 @@ ul {
   /*height:24px;*/
   margin:2px;
   line-height: 20px;
-  text-align: middle;
+  text-align: left;
 }
 
 .folder_handle {
@@ -98,8 +98,11 @@ ul {
   width: 20px;
 }
 
-.folder_handle:hover {
-   background-image: url("chrome-extension://__MSG_@@extension_id__/images/edit.png");
+.folder_handle.open{
+  float:left;
+  background-image: url("chrome-extension://__MSG_@@extension_id__/images/node_open.png");
+  height: 20px;
+  width: 20px;
 }
 
 .bookmark_handle {
@@ -111,6 +114,12 @@ ul {
 
 .bookmark_handle:hover {
    background-image: url("chrome-extension://__MSG_@@extension_id__/images/edit.png");
+  -o-transition:.5s;
+  -ms-transition:.5s;
+  -moz-transition:.5s;
+  -webkit-transition:.5s;
+  /* ...and now for the proper property */
+  transition:.5s;
 }
 
 .bookmark input[type="checkbox"] {
@@ -148,8 +157,9 @@ ul {
   display: inline-block;
 }
 
-.bookmark_content {
-  margin-left: 20px;
+.bookmark .bookmark_content {
+  float:left;
+  margin-left: 15px;
 }
 
 .bookmark .bookmark-tags {
@@ -175,15 +185,15 @@ ul {
 
 .bookmark a.bookmark-title {
   height:24px;
-  padding:4px;
 }
 
-.bookmark .bookmark-context {
+.bookmark .bm_folder_counter {
   display:none;
   text-decoration:none;
+  margin-left: 10px;
 }
 
-.bookmark:hover .bookmark-context {
+.bookmark:hover .bm_folder_counter {
   display:inline;
 }
 
@@ -192,26 +202,6 @@ ul {
 }
 
 
-
-input[type=checkbox].tree_handle:before 
-{ 
-  content:""; 
-  display:inline-block; 
-  width:16px; 
-  height:16px; 
-}
-
-input[type=checkbox].tree_handle:checked:before { background:green; }
-
-/* images */
-input[type=checkbox].tree_handle:before { 
-  display:inline-block;
-  background: url('/images/node_closed.png') #fff;
-}
-input[type=checkbox].tree_handle:checked:before { 
-  display:inline-block;
-  background: url('/images/node_open.png') #fff;
-}
 
 /* AngularJS */
 

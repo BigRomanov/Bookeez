@@ -17,7 +17,6 @@ function Bookmark(title, url, dateAdded, id, index, parentId, tags)
     this.parentId  = parentId;
     this.children  = [];
 
-    this.checked   = false;
     this.expanded  = false;
 
     this.tags      = tags;
@@ -57,7 +56,6 @@ function Bookmark(title, url, dateAdded, id, index, parentId, tags)
       this.parentId  = src.parentId;
       this.children  = src.children;
 
-      this.checked   = src.checked;
       this.expanded  = src.expanded;
 
       this.tags      = tags;

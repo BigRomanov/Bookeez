@@ -76,16 +76,18 @@ bookiesApp.directive('bookmarkTree', function($compile) {
 });
 
 bookiesApp.directive('bookmark', function($compile, $timeout) {
+
+  // TODO: Refactor directive templates into separate files
   var bookmarkTemplate = '<li>' +
         '<div class="bookmark"> ' +
           // handle
-          '<div class="bookmark_handle" ng-click="editorActive = !editorActive"> '+
-          '</div>' +
+          '<div class="bookmark_handle" ng-click="editorActive = !editorActive"></div> '+
+          
           //content
           '<div class="bookmark_content">' +
 
             // editor
-            '<div ng-show="editorActive">' +
+            '<div class="bm_tree_edit" ng-show="editorActive">' +
 
               '<inline-editor value="bookmark.title" update="bookmark.updateTitle()"></inline-editor>' +
               '<inline-editor url value="bookmark.url"  update="bookmark.updateUrl()">  </inline-editor>' +
@@ -96,27 +98,28 @@ bookiesApp.directive('bookmark', function($compile, $timeout) {
             '</div>' +
 
             // view
-            '<div ng-hide="editorActive">' + 
-              '<a class="bookmark-title" href={{bookmark.url}} target="_blank" ng-bind="bookmark.title | highlight:prefix"></a>' 
-            '</div>'
+            '<div class="bm_tree_view" ng-hide="editorActive">' + 
+              '<a class="bookmark-title" href={{bookmark.url}} target="_blank" ng-bind="bookmark.title | highlight:prefix"></a>' +
+            '</div>' +
             
           '</div>' +
+          '<div class="empty_div" style="clear:both"></div>' +
         '</div>' +
     '</li>';
 
   var folderTemplate = '<li>' +
         '<div class="bookmark"> ' +
           // handle
-          '<div class="bookmark_handle" ng-click="expand(bookmark, $event)">' +
-            '<input type="checkbox" class="tree_handle" ng-checked="bookmark.checked"></input>' +
-          '</div>' +
+          '<div class="folder_handle" ng-click="expand(bookmark, $event)"></div>' +
           
           // content
-          '<div class="bookmark_content" style="float:left" ng-init="isEditing=false">' +
+          '<div class="bookmark_content" ng-init="isEditing=false">' +
             '<inline-editor value="bookmark.title" update="bookmark.updateTitle()"></inline-editor>' +
           '</div>' +  // ~content
-          // actions (not visible in editor)
-          '<div ng-hide="isEditing" class="bookmark_actions bookmark-context" style="float:left"> ({{bookmark.countChildren()}}) </div>' + 
+
+          // counter (not visible when editing folder)
+          '<div ng-hide="isEditing" class="bm_folder_counter"> ({{bookmark.countChildren()}}) </div>' + 
+
           '<div style="clear:both"></div>' +
         '</div>' +
     '</li>';
@@ -135,15 +138,18 @@ bookiesApp.directive('bookmark', function($compile, $timeout) {
 
     link: function(scope, elm, attrs) {
       scope.expand = function(bookmark, $event) {
-        bookmark.checked = !bookmark.checked;
+        bookmark.expanded = !bookmark.expanded;
+
         if (scope.bookmark.children.length > 0) {
-          if (scope.bookmark.checked == true)
+          if (scope.bookmark.expanded == true)
           {
+            $('.folder_handle',elm).addClass('open');
             var bookmarks = $compile('<bookmark-tree on-edit="onEdit({bookmark:bookmark})" ng-model="bookmark.children" prefix="prefix"></bookmark-tree>')(scope)
             elm.append(bookmarks);
           }
           else
           {
+            $('.folder_handle',elm).removeClass('open');
             $('ul',elm).remove(); 
           }
         }
@@ -152,7 +158,7 @@ bookiesApp.directive('bookmark', function($compile, $timeout) {
       elm.append(getTemplate(scope.bookmark)).show();
       $compile(elm.contents())(scope);
 
-      if ((scope.bookmark.checked == true || scope.bookmark.expanded == true) && scope.bookmark.children.length > 0) {
+      if ((scope.bookmark.expanded == true) && scope.bookmark.children.length > 0) {
         var bookmarks = $compile('<bookmark-tree on-edit="onEdit({bookmark:bookmark})" ng-model="bookmark.children" prefix="prefix"></bookmark-tree>')(scope)
         elm.append(bookmarks);
       }
