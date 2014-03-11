@@ -60,7 +60,7 @@ bookiesApp.directive( 'inlineEditor', function($compile, $timeout) {
 
 bookiesApp.directive('bookmarkTree', function($compile) {
       return {
-        template: '<ul><bookmark ng-repeat="bookmark in bookmarkTree" onEdit="onEdit(bookmark) prefix="prefix"></bookmark></ul>',
+        template: '<ul><bookmark ng-repeat="bookmark in bookmarkTree" prefix="prefix"></bookmark></ul>',
         replace: true,
         transclude: true,
         restrict: 'E',
@@ -81,7 +81,11 @@ bookiesApp.directive('bookmark', function($compile, $timeout) {
   var bookmarkTemplate = '<li>' +
         '<div class="bookmark"> ' +
           // handle
-          '<div class="bookmark_handle" ng-click="editorActive = !editorActive"></div> '+
+          '<div class="bookmark_handle" ng-hide="editorActive" ng-click="editorActive = !editorActive"></div> '+
+          '<div class="bm_edit_handle " ng-show="editorActive">'+
+            '<div class="bm_edit_ok"     ng-click="update(bookmark)"></div> '+
+            '<div class="bm_edit_cancel" ng-click="editorActive = false"></div> '+
+          '</div>' +
           
           //content
           '<div class="bookmark_content">' +
@@ -89,12 +93,11 @@ bookiesApp.directive('bookmark', function($compile, $timeout) {
             // editor
             '<div class="bm_tree_edit" ng-show="editorActive">' +
 
-              '<inline-editor value="bookmark.title" update="bookmark.updateTitle()"></inline-editor>' +
-              '<inline-editor url value="bookmark.url"  update="bookmark.updateUrl()">  </inline-editor>' +
+              '<inline-editor value="bookmarkEdit.title"   > </inline-editor>' +
+              '<inline-editor url value="bookmarkEdit.url" > </inline-editor>' +
               
-              '<div class="bookmark-tags" >' +
-                '<tags-input on-tag-added="bookmark.updateTags()" ng-model="bookmark.tags"></tags-input>' +
-              '</div>' +
+              '<tags-input ng-model="bookmarkEdit.tags"></tags-input>' +
+
             '</div>' +
 
             // view
@@ -137,6 +140,7 @@ bookiesApp.directive('bookmark', function($compile, $timeout) {
     restrict: 'E',
 
     link: function(scope, elm, attrs) {
+      scope.bookmarkEdit = scope.bookmark;
       scope.expand = function(bookmark, $event) {
         bookmark.expanded = !bookmark.expanded;
 
@@ -144,7 +148,7 @@ bookiesApp.directive('bookmark', function($compile, $timeout) {
           if (scope.bookmark.expanded == true)
           {
             $('.folder_handle',elm).addClass('open');
-            var bookmarks = $compile('<bookmark-tree on-edit="onEdit({bookmark:bookmark})" ng-model="bookmark.children" prefix="prefix"></bookmark-tree>')(scope)
+            var bookmarks = $compile('<bookmark-tree ng-model="bookmark.children" prefix="prefix"></bookmark-tree>')(scope)
             elm.append(bookmarks);
           }
           else
@@ -155,11 +159,20 @@ bookiesApp.directive('bookmark', function($compile, $timeout) {
         }
       }; 
 
+      scope.cancel = function() {
+        // reset
+        scope.bookmarkEdit = scope.bookmark;
+      };
+
+      scope.update = function(bookmark) {
+        console.log("Edited value", bookmark);
+      };
+
       elm.append(getTemplate(scope.bookmark)).show();
       $compile(elm.contents())(scope);
 
       if ((scope.bookmark.expanded == true) && scope.bookmark.children.length > 0) {
-        var bookmarks = $compile('<bookmark-tree on-edit="onEdit({bookmark:bookmark})" ng-model="bookmark.children" prefix="prefix"></bookmark-tree>')(scope)
+        var bookmarks = $compile('<bookmark-tree  ng-model="bookmark.children" prefix="prefix"></bookmark-tree>')(scope)
         elm.append(bookmarks);
       }
     }

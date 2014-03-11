@@ -122,6 +122,22 @@ ul {
   transition:.5s;
 }
 
+.bm_edit_handle {
+  float:left;
+}
+
+.bm_edit_ok {
+  background-image: url("chrome-extension://__MSG_@@extension_id__/images/edit_ok.png");
+  height: 20px;
+  width: 20px;
+}
+
+.bm_edit_cancel {
+  background-image: url("chrome-extension://__MSG_@@extension_id__/images/edit_cancel.png");
+  height: 20px;
+  width: 20px;
+}
+
 .bookmark input[type="checkbox"] {
   margin: 0;
 }
@@ -162,25 +178,18 @@ ul {
   margin-left: 15px;
 }
 
+ 
+.bookmark .bm_tree_edit {
+  border:1px solid #ccc;
+  border-radius: 4px;
+  padding:4px;
+  width: 600px;
+}
+
 .bookmark .bookmark-tags {
   margin-top: 2px;
   display: block;
-  -webkit-transition: opacity 1s ease-out;
-  opacity: 0; 
-  height: 0;
   overflow: hidden;
-}
-
-.bookmark:hover .bookmark-tags {
-  display:block;
-  opacity: 1;
-  height: auto;
-  transition-delay: .2s !important; 
-}
-
-.bookmark-tag-input {
-  border:none;
-  background-color: #ddd;
 }
 
 .bookmark a.bookmark-title {
