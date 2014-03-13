@@ -6,6 +6,7 @@
 var express = require('express');
 var routes = require('./routes');
 var user = require('./routes/user');
+var login = require('./routes/login');
 var http = require('http');
 var path = require('path');
 var fs = require('fs');
@@ -89,7 +90,7 @@ passport.use(new LocalStrategy(
 ));
 
 //password reset config
-
+/*
 var forgot = require('password-reset-nodemailer')({
     uri: 'http://localhost:2000/password_reset',
     from: 'password-robot@localhost',
@@ -97,12 +98,27 @@ var forgot = require('password-reset-nodemailer')({
     transportOptions: {
         service: "Gmail",
         auth: {
-            user: "hey hey", //change that
-            pass: "yo yo" //change this
+            user: "lirco77@gmail.com", //change that
+            pass: "ggoldenpi1618e" //change this
         }
     }
 });
 app.use(forgot.middleware);
+*/
+
+var forgot = require('password-reset')({
+    uri: 'http://localhost:2000/password_reset',
+    from: 'password-robot@localhost',
+    transportType: 'SMTP',
+    transportOptions: {
+        service: "Gmail",
+        auth: {
+            user: "yo yo", //change that
+            pass: "yo yo" //change this
+        }
+    }
+});
+
 
 //gets and posts
 app.get('/', routes.home);
@@ -111,14 +127,15 @@ app.get('/register', routes.registerPage);
 app.get('/logout', routes.logout);
 app.get('/reset', routes.resetPage);
 app.get('/forgot', routes.forgotPage);
+app.get('/password_reset/:tokenID', routes.resetMe);
+
 
 app.post('/login', routes.login(passport));
 app.post('/Register', routes.register);
 
 // forgot password
-//app.post('/forgot', express.bodyParser(), routes.forgot(forgot));
-//app.post('/reset', express.bodyParser(), routes.reset(forgot));
-app.post('/forgot', routes.forgot);
+app.post('/forgot', express.bodyParser(), routes.forgot(forgot));
+app.post('/reset', express.bodyParser(), routes.reset(forgot));
 
 //start server
 http.createServer(app).listen(app.get('port'), function(){

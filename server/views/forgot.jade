@@ -11,13 +11,11 @@ html
         h1 Reset your password
         p.lead password reset for #{email}
         br
-        p #{message}
-        br
         form(role='form', action="/reset",method="post", style='max-width: 300px;')
             .form-group
                 input.form-control(type='password', name="password", placeholder='Enter new password')
             .form-group
                 input.form-control(type='password', name="confirm", placeholder='confirm new password')
             .form-group
-                input.form-control(type='hidden', name="email", value="#{email}")
+                input.form-control(type='hidden', name="tokenID", value="#{tokenID}")
             button.btn.btn-default(type='submit' value="forgot password") Submit
