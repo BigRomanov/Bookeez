@@ -4,6 +4,7 @@ define(
 function(bookiesApp) { 'use strict';
 
 
+
 bookiesApp.directive( 'inlineEditor', function($compile, $timeout) {
 
   // TODO: Prefix highlighting is currently hard coded into the editor, we should consider refactoring this
@@ -81,22 +82,23 @@ bookiesApp.directive('bookmark', function($compile, $timeout) {
   var bookmarkTemplate = '<li>' +
         '<div class="bookmark"> ' +
           // handle
-          '<div class="bookmark_handle" ng-hide="editorActive" ng-click="editorActive = !editorActive"></div> '+
-          '<div class="bm_edit_handle " ng-show="editorActive">'+
-            '<div class="bm_edit_ok"     ng-click="update(bookmark)"></div> '+
-            '<div class="bm_edit_cancel" ng-click="editorActive = false"></div> '+
+          '<div class="bookmark_handle"  ng-hide="editorActive" ng-click="editorActive = !editorActive"></div> '+
+          '<div class="bm_edit_handle "  ng-show="editorActive">'+
+            '<div class="bm_edit_ok"     ng-click="update(bookmark);editorActive=false"></div> '+
+            '<div class="bm_edit_cancel" ng-click="editorActive=false"></div> '+
           '</div>' +
           
           //content
           '<div class="bookmark_content">' +
 
-            // editor
+            // editor // TODO: Refactor this into a separate directive
             '<div class="bm_tree_edit" ng-show="editorActive">' +
 
               '<inline-editor value="bookmarkEdit.title"   > </inline-editor>' +
               '<inline-editor url value="bookmarkEdit.url" > </inline-editor>' +
               
               '<tags-input ng-model="bookmarkEdit.tags"></tags-input>' +
+              '<a ng-click="bookmark.delete()" href="">Delete</a>' +
 
             '</div>' +
 
@@ -140,7 +142,13 @@ bookiesApp.directive('bookmark', function($compile, $timeout) {
     restrict: 'E',
 
     link: function(scope, elm, attrs) {
-      scope.bookmarkEdit = scope.bookmark;
+
+      // TODO: Refactor this part into a separate dicrective for the editor
+      scope.bookmarkEdit = {
+        title: scope.bookmark.title,
+        url: scope.bookmark.url,
+        tags : scope.bookmark.tags
+      }
       scope.expand = function(bookmark, $event) {
         bookmark.expanded = !bookmark.expanded;
 
@@ -165,7 +173,7 @@ bookiesApp.directive('bookmark', function($compile, $timeout) {
       };
 
       scope.update = function(bookmark) {
-        console.log("Edited value", bookmark);
+        bookmark.update(scope.bookmarkEdit);
       };
 
       elm.append(getTemplate(scope.bookmark)).show();

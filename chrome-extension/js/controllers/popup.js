@@ -1,5 +1,5 @@
 define(
-'controllers/header',
+'controllers/popup',
 [
   'jQuery', 
   'bookiesApp', 
@@ -10,7 +10,7 @@ function($, bookiesApp) { 'use strict';
 /*
 * Application controller.
 */
-var HeaderController = function($scope, $rootScope, $filter, $modal, $timeout) {
+var PopupController = function($scope, $rootScope, $filter, $modal, $timeout) {
   $scope.searchText = ''; // Search text
 
   var tempFilterText = '', filterTextTimeout;
@@ -29,6 +29,6 @@ var HeaderController = function($scope, $rootScope, $filter, $modal, $timeout) {
   
 }
 
-bookiesApp.controller('headerController', ['$scope', '$rootScope','$filter', '$modal', '$timeout',HeaderController]);
+bookiesApp.controller('popupController', ['$scope', '$rootScope','$filter', '$modal', '$timeout', PopupController]);
 
 });

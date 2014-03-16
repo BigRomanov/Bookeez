@@ -4,38 +4,19 @@ define(
   'jQuery', 
   'bookiesApp', 
   'models/bookmarkModel',
-  'filters/fieldsFilter',
-  'controllers/editBookmark',
+  'filters/filters',
 ], 
 function($, bookiesApp) { 'use strict';
 
 /*
-* Application controller.
+* Tree view controller.
 */
 var TreeController = function($scope, $filter, $modal, bookmarkModel) {
-  
-  // Constant: default value of how many items we want to display on main page.
-  var defaultTotalDisplayed = 30;
-
   $scope.searchText = ''; // Search text
-  
-  //$scope.bookmarks = []; // All bookmarks
   $scope.bookmarkTree = {}; // All bookmarks as tree
-  $scope.orders = [ // Different sorting orders
-                    {title:'Title', value: 'title'}, 
-                    {title:'Date created', value: 'date'},
-                    {title:'Url', value: 'url'}
-                  ];
-  $scope.currentOrder = $scope.orders[0]; // title is default sorting order
-
-  // Maximum number of items currently displayed
-  $scope.totalDisplayed = defaultTotalDisplayed;
 
   $scope.selectedIndex = 0;
 
-  var getAllPanels = function() {
-    return $('#list-bookmarks div.panel');
-  }
 
   var isElementInViewport = function(el) {
     var rect = el.getBoundingClientRect();
@@ -79,76 +60,22 @@ var TreeController = function($scope, $filter, $modal, bookmarkModel) {
   });
 */
 
-  // Get bookmarks we show on the page (in right order)
-  var getFilteredBookmarks = function() {
-    var bookmarksFilter = $filter('fieldsFilter');
-    return bookmarksFilter($scope.bookmarks, $scope.searchText, $scope.currentOrder.value);
-  }
-
-  // Show modal dialog for adding tags
-  $scope.editBookmark = function(bookmark) {
-    console.log("Edit bookmark");
-    console.log(bookmark);
-
-    var modalInstance = $modal.open({
-      scope: $scope.$new(true /* isolate */),
-      templateUrl: 'partials/editBookmark.tpl.html',
-      controller: 'editBookmarkController',
-      resolve: {
-        bookmark: function() {
-          return bookmark;
-        }
-      },
-      keyboard: true,
-      backdrop: 'static'
-    });
-
-    modalInstance.result.then(function (updatedBookmark) {
-      if (!updatedBookmark) {
-        // Bookmark was deleted
-        $scope.bookmarks.splice(_.indexOf($scope.bookmarks, bookmark), 1);
-      }
-    });
-    
-    return false;
-  };
-
-  bookmarkModel.getTree(function(bookmarks) {
+  bookmarkModel.load(function(bookmarks) {
     $scope.loadedTree = bookmarks;
     $scope.$apply();
   }.bind(this));
 
   // Handle search event
   $scope.$on('search', function(event, searchText) {
-    console.log("Searching:", searchText);
-
-    // In the future we might need some manipulation to get to the prefix from search string
     $scope.searchPrefix = searchText;
 
-    if (searchText)
-    {
+    if (searchText) {
       $scope.bookmarkTree = bookmarkModel.filterTree($scope.bookmarkTree, searchText);
     }
-    else
-    {
+    else {
       $scope.bookmarkTree = $scope.loadedTree;
     }
   });
- 
-  // On tag click we set search text
-  $scope.selectTag = function(tag) {
-    $scope.searchText = 'tag:' + tag;
-  };
-
-  // Change sorting order
-  $scope.changeOrder = function(order) {
-    $scope.currentOrder = order;
-    resetView();
-  };
-
-  $scope.selectBookmark = function(index) {
-    $scope.selectedIndex = index;
-  }
 }
 
 bookiesApp.controller('treeController', ['$scope', '$filter', '$modal', 'bookmarkModel', TreeController]);

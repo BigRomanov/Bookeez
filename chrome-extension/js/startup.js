@@ -60,8 +60,13 @@ require([
   'bootstrap-tagsinput-angular',
   'ng-tags-input',
   'filters/filters',
+  // Directives
   'directives/directives',
+  'directives/opentabs',
+
+  // Controllers
   'controllers/tree', 
+  'controllers/popup', 
   'controllers/header', ], function($, angular) {
     angular.bootstrap(document, ['bookiesApp']);
   });
