@@ -90,22 +90,6 @@ passport.use(new LocalStrategy(
 ));
 
 //password reset config
-/*
-var forgot = require('password-reset-nodemailer')({
-    uri: 'http://localhost:2000/password_reset',
-    from: 'password-robot@localhost',
-    transportType: 'SMTP',
-    transportOptions: {
-        service: "Gmail",
-        auth: {
-            user: "lirco77@gmail.com", //change that
-            pass: "ggoldenpi1618e" //change this
-        }
-    }
-});
-app.use(forgot.middleware);
-*/
-
 var forgot = require('password-reset')({
     uri: 'http://localhost:2000/password_reset',
     from: 'password-robot@localhost',
@@ -113,8 +97,8 @@ var forgot = require('password-reset')({
     transportOptions: {
         service: "Gmail",
         auth: {
-            user: "yo yo", //change that
-            pass: "yo yo" //change this
+            user: "bookeez.app@gmail.com", //change that
+            pass: "alexandliran" //change this
         }
     }
 });
@@ -127,7 +111,8 @@ app.get('/register', routes.registerPage);
 app.get('/logout', routes.logout);
 app.get('/reset', routes.resetPage);
 app.get('/forgot', routes.forgotPage);
-app.get('/password_reset/:tokenID', routes.resetMe);
+//app.get('/password_reset:?tokenID', routes.resetMe);
+app.get('/password_reset', routes.resetMe);
 
 
 app.post('/login', routes.login(passport));
