@@ -31,7 +31,8 @@ exports.forgotPage = function(req, res) {
 };
 
 exports.resetMe =  function(req, res) {
-    var currentToken = req.param("tokenID");
+    var currentToken = req.param('tokenID');
+    console.log('the token is ' + currentToken);
     res.render('forgot', {
         tokenID : currentToken
     })
@@ -101,20 +102,30 @@ exports.reset = function (forgot) {
         var tokenID = req.body.tokenID;
         var password = req.body.password;
         var confirm = req.body.confirm;
-        if (password !== confirm) return res.end('passwords do not match');
+        if (password !== confirm) {
+            res.render('reset' , {
+                message: 'passwords do not match, please try again'
+                // implement this in page, detecting passwords do not match
+            });
+        }
 
         var callback = {
-            expired: function(req, res) {
+            expired: function() {
                 res.end('The token is expired, try again please.');
             },
-            success: function(req, res) {
-                var email = callback.email;
+            success: function() {
+                var email = this.email;
                 //UPDATE DB HERE
                 var sql = "UPDATE `potluck` SET `password` = '" + password + "' WHERE `potluck`.`email` ='" + email + "'";
                 client.query(sql, function (err, results) {
                     if (err) { throw err;
                     }
-                })
+                    sql = "DELETE from " + resetDB + " WHERE email='" + email + "'";
+                    client.query(sql, function (err, results) {
+                        if (err) { throw err;
+                        }
+                    });
+                });
                 res.end('password reset');
             }
         };
@@ -124,40 +135,37 @@ exports.reset = function (forgot) {
 
         //START FROM HERE
 
-        checkExpired = function(tokenID, resetDB, cb) {
+        var checkExpired = function(tokenID, resetDB, cb) {
 
-            console.log('token is ' + tokenID);
-            var currnet_time = new Date();
-            var request_time = null;
-            //var time = null;
-            //var email = null;
+            var current_time = new Date();
+            var user = null;
             var sql = "SELECT * FROM "+ resetDB +" WHERE tokenID = '"+ tokenID +"' limit 1";
             client.query(sql, function(err, results) {
                 if (err) { throw err;
                 }
                 if (!results[0]) {
-                    res.end('token is missing');
+                    //res.end('token is missing');
                     console.log('no user found');
                 }
-                var time = results[0].time;
-                var email = results[0].email;
-            });
-            console.log('the user is ' + time + email);
+                //found the user, get the request time and compare
+                var user = results[0];
 
-            currnet_time = currnet_time.getTime();
-            request_time = time.getTime();
-            var diff = (currnet_time - request_time)/60000 ;
-            console.log('the diff is '+ diff);
-            if (diff > 10) {
-                //if more than 10 minutes, callback gets expired value
-                if (cb.expired) cb.expired();
-            } else {
-                //otherwise, callback gets good to go with the user email
-                if (cb.success) {
-                    cb.email = user.email;
-                    cb.success();
+                current_time = current_time.getTime();
+                var request_time = new Date(user.time);
+                request_time = request_time.getTime();
+                var diff = (current_time - request_time)/60000 ;
+                console.log('the diff is '+ diff);
+                if (diff > 10) {
+                    //if more than 10 minutes, callback gets expired value
+                    if (cb.expired) cb.expired();
+                } else {
+                    //otherwise, callback gets good to go with the user email
+                    if (cb.success) {
+                        cb.email = user.email;
+                        cb.success();
+                    }
                 }
-            }
+            });
         };
 
         checkExpired(tokenID, resetDB, callback);
