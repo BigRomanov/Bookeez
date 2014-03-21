@@ -111,7 +111,6 @@ app.get('/register', routes.registerPage);
 app.get('/logout', routes.logout);
 app.get('/reset', routes.resetPage);
 app.get('/forgot', routes.forgotPage);
-//app.get('/password_reset:?tokenID', routes.resetMe);
 app.get('/password_reset', routes.resetMe);
 
 
