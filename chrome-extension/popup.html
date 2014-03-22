@@ -9,14 +9,30 @@
         <link rel="stylesheet" href="./css/bootstrap-tagsinput.css">
         <link rel="stylesheet" href="./css/ng-tags-input.css">
         <link rel="stylesheet" href="./css/font-awesome.min.css">
-        <link rel="stylesheet" href="./css/style.css">
+        <link rel="stylesheet" href="./css/popup.css">
+        <link rel="stylesheet" href="./css/inline-editor.css">
         <script src="./js/lib/require.min.js"></script>
         <script src="./js/startup.js"></script>
     </head>
     <body>
-      <div ng-controller="popupController" style="width:300px">
-      	<span>Context:</span>
-      	<open-tabs></open-tabs>
+      <div class="tab-list-container" ng-controller="popupController">
+
+        <div class="tab-list-header">
+          <div class="tab-list-title">
+        	 <inline-editor  value="context" ng-init="context='Click here to add title'"></inline-editor>
+          </div>
+          <div class="tab-list-actions">
+            <div class="tab-list-action-add-all" ng-click="addAllTabs()"></div>
+          </div>
+        </div>
+        <div class="tab-list-wrapper">
+          <div class="tab-list-notice" ng-show="notice ">
+              {{notice}} <a href="" ng-click="undoAction()">undo</a>
+          </div>
+          <div class="tab-list">
+          	<open-tab ng-repeat="tab in openTabs"></open-tab>
+          </div>
+        </div>
       </div>
     </body>
 </html>

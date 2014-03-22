@@ -1,0 +1,30 @@
+.inlineEditor span {
+  cursor: pointer;
+}
+
+.inlineEditor a {
+  cursor: pointer;
+}
+
+.inlineEditor input {
+  display: none;
+  height: 20px;
+  line-height: 20px;
+  border:none;
+}
+
+.inlineEditor.active span {
+  display: none;
+}
+
+.inlineEditor.active a {
+  display: none;
+}
+
+.inlineEditor.active span {
+  display: none;
+}
+
+.inlineEditor.active input {
+  display: inline-block;
+}

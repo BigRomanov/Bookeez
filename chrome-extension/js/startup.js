@@ -62,8 +62,6 @@ require([
   'filters/filters',
   // Directives
   'directives/directives',
-  'directives/opentabs',
-
   // Controllers
   'controllers/tree', 
   'controllers/popup', 

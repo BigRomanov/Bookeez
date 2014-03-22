@@ -7,6 +7,7 @@ var express = require('express');
 var routes = require('./routes');
 var user = require('./routes/user');
 var login = require('./routes/login');
+var api = require('./routes/api');
 var http = require('http');
 var path = require('path');
 var fs = require('fs');
@@ -39,7 +40,13 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
 
+// TODO:
+// according to this: http://stackoverflow.com/questions/5710358/how-to-get-post-query-in-express-node-js
+// the use of bodyParser is not recommended, as it is equivalent to use of json and urlencoded middleware, in addition 
+// to an unsafe multipart - we should review and remove this before release
+// also here: http://andrewkelley.me/post/do-not-use-bodyparser-with-express-js.html
 app.use(express.bodyParser());
+
 app.use(express.cookieParser('your secret here'));
 app.use(express.session());
 
@@ -118,8 +125,12 @@ app.post('/login', routes.login(passport));
 app.post('/Register', routes.register);
 
 // forgot password
+// TO
 app.post('/forgot', express.bodyParser(), routes.forgot(forgot));
 app.post('/reset', express.bodyParser(), routes.reset(forgot));
+
+// api
+app.post('/api/add_session', api.add_session)
 
 //start server
 http.createServer(app).listen(app.get('port'), function(){

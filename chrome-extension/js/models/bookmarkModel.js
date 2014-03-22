@@ -1,18 +1,20 @@
+console.log("Processing bookmarkModel");
+
 define(
 'models/bookmarkModel',
 [ 
   'underscore', 
   'bookiesApp',
-  'models/bookmark'
+  'models/bookmark',
+  'models/bookmarkProvider',
 ],
 
-function(_, bookiesApp) { "use strict";
-
-  var BookmarkModel = function () {
+function(_, bookiesApp, Bookmark) { "use strict";
+  console.log("Processing bookmarkModel function");
+  
+  var BookmarkModel = function (bookmarkProvider) {
 
     var rootFolder = new Bookmark("Bookmarks");
-
-    var providers = [];
     
     var createBookmarks = function(root, tree, folders) {
         
@@ -47,6 +49,15 @@ function(_, bookiesApp) { "use strict";
     
     
     this.load = function(callback) {
+      console.log("Loading model", bookmarkProvider.getProviders());
+      var self = this;
+      // _.each(bookmarkProvider.getProviders(), function(provider) {
+      //   provider.load(function(tree) {
+      //     mergeBookmarks(rootFolder, tree[0]);
+      //     callback(rootFolder.children);
+      //   });
+      // });
+
       chrome.bookmarks.getTree(function(tree) {
         createBookmarks(rootFolder, tree[0].children, []);
         callback(rootFolder.children);
@@ -109,10 +120,11 @@ function(_, bookiesApp) { "use strict";
       removeBookmarkTags(bookmark.url);
       chrome.bookmarks.remove(bookmark.id);
     };
+
   };
 
-  bookiesApp.factory('bookmarkModel', function(){
-    return new BookmarkModel();
-  });
+  bookiesApp.factory('bookmarkModel', ["bookmarkProvider", function(bookmarkProvider){
+    return new BookmarkModel(bookmarkProvider);
+  }]);
 
 });

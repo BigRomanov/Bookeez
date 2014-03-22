@@ -6,7 +6,10 @@
   "description": "Social Bookmarking and Collaborative Learning",
 
   "permissions": [
-    "bookmarks", "storage"
+    "bookmarks", 
+    "storage", 
+    "tabs", 
+    "http://*/"
   ],
 
   // "app": {

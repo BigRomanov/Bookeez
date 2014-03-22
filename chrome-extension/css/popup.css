@@ -1,0 +1,55 @@
+.tab-list-container {
+	width:400px;
+	height: 600px;
+}
+
+.tab-list-header {
+
+	height:60px;
+	position:fixed;
+	top: 0;
+  width: 100%;
+  z-index: 100;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+.tab-list-title {
+	font-size:20px;
+	line-height: 30px;
+	padding:2px;
+	margin-left:10px;
+}
+
+.tab-list-title input {
+	line-height: 30px;
+	height:30px;
+}
+
+.tab-list-wrapper {
+	margin-top: 60px;
+}
+
+.tab-list {
+	overflow-y:scroll;
+}
+
+.tab-list-notice {
+	height:20px;
+	background-color: #B2CCFF;
+}
+
+.tab-list-action-add-all {
+	height:20px;
+	width:20px;
+	background-image: url("chrome-extension://__MSG_@@extension_id__/images/add_button.png");
+}
+
+.opentab {
+	margin:10px;
+	padding:2px;
+}
+
+.opentab .title {
+	font-size:14px;
+}
