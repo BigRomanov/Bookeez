@@ -3,28 +3,38 @@
  * Module dependencies.
  */
 
-var express = require('express');
-var routes = require('./routes');
-var user = require('./routes/user');
-var login = require('./routes/login');
-var http = require('http');
-var path = require('path');
-var fs = require('fs');
+var express = require('express'),
+    routes = require('./routes'),
+    Auth = require('./routes/Auth'),
+    user = require('./routes/user'),
+    path = require('path'),
+    http = require('http'),
+    fs = require('fs'),
+    client = require('./models');
 
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
+var passport = require('passport'),
+    LocalStrategy = require('passport-local').Strategy;
 
-//DB
-var mysql = require('mysql');
+passport.use(new LocalStrategy({
+        usernameField: 'email'
+    },
+    function(email, password, done) {
+        return Auth.findByUsername(passport, email, password, done);
+    }
+));
 
-var sqlInfo = {
-    host: 'localhost',
-    user: 'root',
-    password: 'viper12',
-    database: 'data'
-}
-
-client = mysql.createConnection(sqlInfo);
+var forgot = require('password-reset')({
+    uri: 'http://localhost:2000/password_reset',
+    from: 'password-robot@localhost',
+    transportType: 'SMTP',
+    transportOptions: {
+        service: "Gmail",
+        auth: {
+            user: "bookeez.app@gmail.com",
+            pass: "alexandliran"
+        }
+    }
+});
 
 //app
 var app = express();
@@ -59,67 +69,23 @@ app.configure('production', function(){
     app.use(express.errorHandler());
 });
 
-// passport config for mysql
-
-function findByUsername(username, password, done) {
-    var sql="SELECT * FROM potluck WHERE email = '"+ username +"' and password = '"+ password +"' limit 1";
-    client.query(sql, function (err, results) {
-        var user = results[0];
-        if (err) { throw err;
-        }
-        if (!user) { return done(null, false, { message: 'Unknown user ' + username });
-        }
-        if (user.password != password) { return done(null, false, { message: 'Invalid password' });
-        }
-        passport.serializeUser(function(user, done) {
-            done(null, user);
-        });
-        passport.deserializeUser(function(user, done) {
-            done(null, user);
-        });
-        return done(null, user);
-    });
-    //client.end(); //need to fix this - throws error if login failed. Is this important to end connection?
-};
-
-
-passport.use(new LocalStrategy(
-    function(username, password, done) {
-        return findByUsername(username, password, done);
-    }
-));
-
-//password reset config
-var forgot = require('password-reset')({
-    uri: 'http://localhost:2000/password_reset',
-    from: 'password-robot@localhost',
-    transportType: 'SMTP',
-    transportOptions: {
-        service: "Gmail",
-        auth: {
-            user: "bookeez.app@gmail.com", //change that
-            pass: "alexandliran" //change this
-        }
-    }
-});
-
-
 //gets and posts
 app.get('/', routes.home);
-app.get('/login', routes.loginPage);
-app.get('/register', routes.registerPage);
-app.get('/logout', routes.logout);
-app.get('/reset', routes.resetPage);
-app.get('/forgot', routes.forgotPage);
-app.get('/password_reset', routes.resetMe);
 
+app.get('/login', Auth.loginPage);
+app.get('/register', Auth.registerPage);
+app.get('/logout', Auth.logout);
+app.get('/reset', Auth.resetPage);
+app.get('/forgot', Auth.forgotPage);
+app.get('/password_reset', Auth.resetMe);
 
-app.post('/login', routes.login(passport));
-app.post('/Register', routes.register);
+app.post('/login', Auth.login(passport));
+app.post('/Register', Auth.register);
 
 // forgot password
-app.post('/forgot', express.bodyParser(), routes.forgot(forgot));
-app.post('/reset', express.bodyParser(), routes.reset(forgot));
+app.post('/forgot', express.bodyParser(), Auth.forgot(forgot));
+app.post('/reset', express.bodyParser(), Auth.reset(forgot));
+
 
 //start server
 http.createServer(app).listen(app.get('port'), function(){
