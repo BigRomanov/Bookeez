@@ -2,9 +2,22 @@
  * This is the route for all controllers involved with user login, register, and forgot password requests
  */
 
-var DBtables = require('.././models').DBtables,
+var client = require('.././models').client,
+    DBtables = require('.././models').DBtables,
     usersDB = DBtables.users,
     resetDB = DBtables.resetDB;
+
+
+//email validation. returns boolean
+function validateEmail(email) {
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+}
+
+//password verification.
+function validatePassword(password) {
+    return (password != "" && password.toString().length >= 8)
+}
 
 
 exports.findByUsername = function(passport, email, password, done) {
@@ -26,12 +39,6 @@ exports.findByUsername = function(passport, email, password, done) {
         return done(null, user);
     });
     //client.end(); //need to fix this - throws error if login failed. Is this important to end connection?
-}
-
-//email validation
-function validateEmail(email) {
-    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(email);
 }
 
 exports.loginPage =  function(req, res){
@@ -67,30 +74,20 @@ exports.resetMe =  function(req, res) {
 
 exports.login = function(passport) {
     return function(req, res, next) {
-        var email = req.body.email;
-        if (validateEmail(email)) {
-            passport.authenticate('local',
-                function(err, user, info) {
-                    if (err) {
-                        return next(err);
+        passport.authenticate('local',
+            function(err, user, info) {
+                if (err) {
+                    return next(err);
+                }
+                if (!user) {
+                    return res.redirect('/login');
+                }
+                req.logIn(user, function(err) {
+                    if (err) { return next(err);
                     }
-                    if (!user) {
-                        console.log("no user found");
-                        return res.redirect('/login');
-                    }
-                    req.logIn(user, function(err) {
-                        if (err) { return next(err);
-                        }
-                        return res.redirect('/');
-                    });
-                })(req, res, next);
-        }
-        else {
-            res.render('login', {
-                message : "invalid email address. Please verify that the email address is correct"
-            })
-        }
-
+                    return res.redirect('/');
+                });
+            })(req, res, next);
     }
 };
 
@@ -110,22 +107,38 @@ exports.register = function(req, res, next) {
         }
         // if email does not exist, insert user to DB
         else {
-            sql = "INSERT INTO "+ usersDB +" ( email , password ) VALUES ('" + email + "','" + password +"')";
-            client.query(sql, function (err, results) {
-                if (err) { throw err;
+            if (validateEmail(email)) {
+                if (validatePassword(password)) {
+                    sql = "INSERT INTO "+ usersDB +" ( email , password ) VALUES ('" + email + "','" + password +"')";
+                    client.query(sql, function (err, results) {
+                        if (err) { throw err;
+                        }
+                        // If inserted succesfully to DB, get it and redirect to login post
+                        sql = "SELECT * FROM "+ usersDB +" WHERE email = '"+ email +"' and password = '"+ password +"' limit 1";
+                        client.query(sql, function (err, results) {
+                            if (err) {throw err;
+                            }
+                            console.log('The user was inserted to DB and his name is '+email);
+                            res.render('index', {
+                                title: 'Bookeez',
+                                user: results[0]
+                            });
+                            // IMPORTANT!! NEED TO ADD VERIFICATION VIA EMAIL FOR EVERY REGISTERED USER!
+                        })
+                    })
                 }
-                // If inserted succesfully to DB, get it and redirect to login post
-                sql = "SELECT * FROM "+ usersDB +" WHERE email = '"+ email +"' and password = '"+ password +"' limit 1";
-                client.query(sql, function (err, results) {
-                    if (err) {throw err;
-                    }
-                    console.log('The user was inserted to DB and his name is '+email);
-                    res.render('index', {
-                        user: results[0]
+                else {
+                    res.render('register', {
+                        message: "Invalid password. Please make sure your password contains at least 8 characters"
                     });
-                    // IMPORTANT!! NEED TO ADD VERIFICATION VIA EMAIL FOR EVERY REGISTERED USER!
-                })
-            })
+                }
+            }
+            else {
+                res.render('register', {
+                    message: "Invalid email address. Please verify that the email address is correct"
+                });
+            }
+
         }
     });
     // client.release(); //should we use this?
