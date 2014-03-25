@@ -1,12 +1,18 @@
 /**
  * This is the route for all controllers involved with user login, register, and forgot password requests
+ *
+ * TO DO :
+ * 1. fix bug in generating the tokenID, once there are signed such as +
+ * 2. fix bug on reset page once the user is not found, server crashes
+ * 3. handle all responses and handle all errors without just throwing them
  */
+
+var passwordHash = require('password-hash');
 
 var client = require('.././models').client,
     DBtables = require('.././models').DBtables,
     usersDB = DBtables.users,
     resetDB = DBtables.resetDB;
-
 
 //email validation. returns boolean
 function validateEmail(email) {
@@ -20,15 +26,17 @@ function validatePassword(password) {
 }
 
 
+
 exports.findByUsername = function(passport, email, password, done) {
-    var sql="SELECT * FROM "+ usersDB +" WHERE email = '"+ email +"' and password = '"+ password +"' limit 1";
+
+    var sql="SELECT * FROM "+ usersDB +" WHERE email = '"+ email +"' limit 1";
     client.query(sql, function (err, results) {
         var user = results[0];
         if (err) { throw err;
         }
         if (!user) { return done(null, false, { message: 'Unknown user ' + email });
         }
-        if (user.password != password) { return done(null, false, { message: 'Invalid password' });
+        if (!passwordHash.verify(password, user.password)) { return done(null, false, { message: 'Invalid password' })
         }
         passport.serializeUser(function(user, done) {
             done(null, user);
@@ -39,7 +47,7 @@ exports.findByUsername = function(passport, email, password, done) {
         return done(null, user);
     });
     //client.end(); //need to fix this - throws error if login failed. Is this important to end connection?
-}
+};
 
 exports.loginPage =  function(req, res){
     res.render('login');
@@ -66,7 +74,6 @@ exports.forgotPage = function(req, res) {
 
 exports.resetMe =  function(req, res) {
     var currentToken = req.param('tokenID');
-    console.log('the token is ' + currentToken);
     res.render('forgot', {
         tokenID : currentToken
     })
@@ -109,12 +116,13 @@ exports.register = function(req, res, next) {
         else {
             if (validateEmail(email)) {
                 if (validatePassword(password)) {
-                    sql = "INSERT INTO "+ usersDB +" ( email , password ) VALUES ('" + email + "','" + password +"')";
+                    var hashedPassword = passwordHash.generate(password);
+                    sql = "INSERT INTO "+ usersDB +" ( email , password ) VALUES ('" + email + "','" + hashedPassword +"')";
                     client.query(sql, function (err, results) {
                         if (err) { throw err;
                         }
                         // If inserted succesfully to DB, get it and redirect to login post
-                        sql = "SELECT * FROM "+ usersDB +" WHERE email = '"+ email +"' and password = '"+ password +"' limit 1";
+                        sql = "SELECT * FROM "+ usersDB +" WHERE email = '"+ email +"' and password = '"+ hashedPassword +"' limit 1";
                         client.query(sql, function (err, results) {
                             if (err) {throw err;
                             }
@@ -151,6 +159,13 @@ exports.reset = function (forgot) {
         var tokenID = req.body.tokenID;
         var password = req.body.password;
         var confirm = req.body.confirm;
+        var hashedPassword = passwordHash.generate(password);
+
+        if (!validatePassword(password)) {
+            res.render('reset' , {
+                message: "Invalid password. Please make sure your password contains at least 8 characters"
+            });
+        }
         if (password !== confirm) {
             res.render('reset' , {
                 message: 'passwords do not match, please try again'
@@ -165,7 +180,7 @@ exports.reset = function (forgot) {
             success: function() {
                 var email = this.email;
                 //UPDATE DB HERE
-                var sql = "UPDATE `"+ usersDB +"` SET `password` = '" + password + "' WHERE `"+ usersDB +"`.`email` ='" + email + "'";
+                var sql = "UPDATE `"+ usersDB +"` SET `password` = '" + hashedPassword + "' WHERE `"+ usersDB +"`.`email` ='" + email + "'";
                 client.query(sql, function (err, results) {
                     if (err) { throw err;
                     }
@@ -190,7 +205,7 @@ exports.reset = function (forgot) {
                 if (err) { throw err;
                 }
                 if (!results[0]) {
-                    //res.end('token is missing');
+                    res.end('token is missing');
                     console.log('no user found');
                 }
                 //found the user, get the request time and compare
