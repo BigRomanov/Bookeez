@@ -5,7 +5,7 @@
 
 var express = require('express'),
     routes = require('./routes'),
-    Auth = require('./routes/Auth'),
+    Auth = require('./routes/Auth/Auth'),
     user = require('./routes/user'),
     path = require('path'),
     http = require('http'),
@@ -23,7 +23,7 @@ passport.use(new LocalStrategy({
     }
 ));
 
-var forgot = require('password-reset')({
+var forgot = require('./routes/Auth/password-reset')({
     uri: 'http://localhost:2000/password_reset',
     from: 'password-robot@localhost',
     transportType: 'SMTP',

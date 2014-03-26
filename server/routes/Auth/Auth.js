@@ -4,8 +4,8 @@
 
 var passwordHash = require('password-hash');
 
-var client = require('.././models').client,
-    DBtables = require('.././models').DBtables,
+var client = require('../.././models').client,
+    DBtables = require('../.././models').DBtables,
     usersDB = DBtables.usersDB,
     resetDB = DBtables.resetDB;
 
