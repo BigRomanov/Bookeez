@@ -1,17 +1,12 @@
 /**
  * This is the route for all controllers involved with user login, register, and forgot password requests
- *
- * TO DO :
- * 1. fix bug in generating the tokenID, once there are signed such as +
- * 2. fix bug on reset page once the user is not found, server crashes
- * 3. handle all responses and handle all errors without just throwing them
  */
 
 var passwordHash = require('password-hash');
 
 var client = require('.././models').client,
     DBtables = require('.././models').DBtables,
-    usersDB = DBtables.users,
+    usersDB = DBtables.usersDB,
     resetDB = DBtables.resetDB;
 
 //email validation. returns boolean
@@ -19,13 +14,10 @@ function validateEmail(email) {
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 }
-
 //password verification.
 function validatePassword(password) {
     return (password != "" && password.toString().length >= 8)
 }
-
-
 
 exports.findByUsername = function(passport, email, password, done) {
 
@@ -99,6 +91,7 @@ exports.login = function(passport) {
 };
 
 exports.register = function(req, res, next) {
+    var username = req.body.username;
     var email = req.body.email;
     var password = req.body.password;
 
@@ -116,8 +109,9 @@ exports.register = function(req, res, next) {
         else {
             if (validateEmail(email)) {
                 if (validatePassword(password)) {
+                    var current_time = new Date();
                     var hashedPassword = passwordHash.generate(password);
-                    sql = "INSERT INTO "+ usersDB +" ( email , password ) VALUES ('" + email + "','" + hashedPassword +"')";
+                    sql = "INSERT INTO "+ usersDB +" ( username, email , password, signup_date ) VALUES ('" + username + "','" + email + "','" + hashedPassword + "','" + current_time + "')";
                     client.query(sql, function (err, results) {
                         if (err) { throw err;
                         }
@@ -126,7 +120,6 @@ exports.register = function(req, res, next) {
                         client.query(sql, function (err, results) {
                             if (err) {throw err;
                             }
-                            console.log('The user was inserted to DB and his name is '+email);
                             res.render('index', {
                                 title: 'Bookeez',
                                 user: results[0]
@@ -169,7 +162,6 @@ exports.reset = function (forgot) {
         if (password !== confirm) {
             res.render('reset' , {
                 message: 'passwords do not match, please try again'
-                // implement this in page, detecting passwords do not match
             });
         }
 
@@ -209,23 +201,26 @@ exports.reset = function (forgot) {
                     console.log('no user found');
                 }
                 //found the user, get the request time and compare
-                var user = results[0];
+                else if (results[0]) {
+                    var user = results[0];
 
-                current_time = current_time.getTime();
-                var request_time = new Date(user.time);
-                request_time = request_time.getTime();
-                var diff = (current_time - request_time)/60000 ;
-                console.log('the diff is '+ diff);
-                if (diff > 10) {
-                    //if more than 10 minutes, callback gets expired value
-                    if (cb.expired) cb.expired();
-                } else {
-                    //otherwise, callback gets good to go with the user email
-                    if (cb.success) {
-                        cb.email = user.email;
-                        cb.success();
+                    current_time = current_time.getTime();
+                    var request_time = new Date(user.time);
+                    request_time = request_time.getTime();
+                    var diff = (current_time - request_time)/60000 ;
+                    console.log('the diff is '+ diff);
+                    if (diff > 10) {
+                        //if more than 10 minutes, callback gets expired value
+                        if (cb.expired) cb.expired();
+                    } else {
+                        //otherwise, callback gets good to go with the user email
+                        if (cb.success) {
+                            cb.email = user.email;
+                            cb.success();
+                        }
                     }
                 }
+
             });
         };
 

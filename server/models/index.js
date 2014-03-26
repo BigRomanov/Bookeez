@@ -17,7 +17,7 @@ client = mysql.createConnection(sqlInfo);
 client.connect();
 
 var DBtables = {
-    users : "users",
+    usersDB : "users",
     resetDB : "password_reset_requests"
 }
 
