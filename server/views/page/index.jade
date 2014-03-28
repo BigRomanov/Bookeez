@@ -1,20 +1,5 @@
 extends ../layout
 
 block content
-  h1= title
-  p Change Page Title
-
-  each bookmark in bookmarks
-    .bookmark_title
-      =bookmark.title
-    .bookmark_url
-      =bookmark.url
-
-  p You can also login to enjoy additional features
-  if (!user)
-      a(href="/login") Login
-      br
-      a(href="/register") Register
-  if (user)
-      p You are currently logged in as #{user.username}
-      a(href="/logout") Logout
+  div(ng-controller="pageController")
+    div(ng-view)

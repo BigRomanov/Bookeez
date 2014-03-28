@@ -28,6 +28,7 @@ Object.keys(db).forEach(function(modelName) {
   }
 })
 
+// The following code reinitializes the database, should usually be commented out
 
 // sequelize
 //   .sync({ force: true })

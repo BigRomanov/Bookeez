@@ -99,6 +99,7 @@ app.get('/page/:id', page.show);
 // api
 app.post('/api/add_session', api.add_session)
 
+
 db
   .sequelize
   .sync({ force: true })
