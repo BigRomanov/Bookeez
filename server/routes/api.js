@@ -1,25 +1,33 @@
 var _       = require('underscore');
-var db      = require('../models')
+var db      = require('../models');
 
 exports.add_session =  function(req, res) {
 	var tabs = req.body;
 
-	// Create new session with unique id
+	var pageUrl = null;
 
-	// Create bookmarks for the session
+	db.Session.create({
+   	title: "Set your own title",
+  })
+  .complete(function(err, session) {
+  	console.log(session);
 
-	_.each(tabs, function(tab) {
-		console.log("============================================");
-		console.log(tab);
-
-		db.Bookmark.create({
+  	var bookmarks = []
+   	// Create bookmarks for the session
+		_.each(tabs, function(tab) {
+			var bookmark = db.Bookmark.build({
     		title: tab.title,
     		url: tab.url
-  		})
-  		.complete(function(err, bookmark) {
-    		/* ... */
-  		})
-	})
+  		});
 
-    res.send({'result':'OK'});
+			bookmark.setSession(session);
+  		bookmark.save().complete(function(err, bookmark) {
+  				// add error handling
+	  	});
+
+	  	pageUrl = db.Session.encryptId(session.id);
+		});
+	});
+
+  res.send({'result':'OK', 'url':pageUrl});
 };

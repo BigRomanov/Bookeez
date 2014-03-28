@@ -7,9 +7,9 @@ module.exports = function(sequelize, DataTypes) {
 		url: DataTypes.STRING
   }, {
     classMethods: {
-      // associate: function(models) {
-      //   Task.belongsTo(models.User)
-      // }
+      associate: function(models) {
+        Bookmark.belongsTo(models.Session)
+      }
     }
   })
  

@@ -9,6 +9,7 @@ var express = require('express')
   , Auth    = require('./routes/Auth/Auth')
   , user    = require('./routes/user')
   , api     = require('./routes/api')
+  , page    = require('./routes/page')
   , path    = require('path')
   , http    = require('http')
   , fs      = require('fs')
@@ -92,6 +93,8 @@ app.post('/Register', Auth.register);
 // forgot password
 app.post('/forgot', express.bodyParser(), Auth.forgot(forgot));
 app.post('/reset', express.bodyParser(), Auth.reset(forgot));
+
+app.get('/page/:id', page.show);
 
 // api
 app.post('/api/add_session', api.add_session)
