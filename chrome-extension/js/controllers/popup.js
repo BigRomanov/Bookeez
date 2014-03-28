@@ -38,7 +38,11 @@ var PopupController = function($scope, $rootScope, $filter, $http, $timeout) {
     $http.post("http://localhost:2000/api/add_session", $scope.openTabs)
       .success(function(data, status, headers, config) {
         console.log(data);
-        //$scope.data = data;
+        $scope.tabUrl = "http://localhost:2000/page/"+data.url;
+
+        chrome.tabs.create({url:$scope.tabUrl}, function(tab) {
+          console.log("New tab created");
+        });
       }).error(function(data, status, headers, config) {
         console.log(data);
         //$scope.status = status;

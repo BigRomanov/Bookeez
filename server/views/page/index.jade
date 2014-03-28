@@ -4,6 +4,12 @@ block content
   h1= title
   p Change Page Title
 
+  each bookmark in bookmarks
+    .bookmark_title
+      =bookmark.title
+    .bookmark_url
+      =bookmark.url
+
   p You can also login to enjoy additional features
   if (!user)
       a(href="/login") Login

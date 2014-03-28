@@ -1,11 +1,15 @@
+var db      = require('../models');
 
 exports.show =  function(req, res){
-	console.log("Show page: ", req.params.id);
+	var sessionId = db.Session.decryptId(req.params.id);
+	console.log("Get bookmarks for session: ", sessionId);
+	
+	db.Bookmark.findAll({where: {SessionId :sessionId}}).success(function(bookmarks) {
+		res.render('page/index', {
+    	title: 'First page',
+    	user: req.user,
+    	bookmarks: bookmarks
+  	});
+	});
 
-	// Add logic 
-
-    res.render('page/index', {
-        title: 'First page',
-        user: req.user
-    });
 };

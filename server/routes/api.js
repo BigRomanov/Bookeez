@@ -10,7 +10,6 @@ exports.add_session =  function(req, res) {
    	title: "Set your own title",
   })
   .complete(function(err, session) {
-  	console.log(session);
 
   	var bookmarks = []
    	// Create bookmarks for the session
@@ -24,10 +23,10 @@ exports.add_session =  function(req, res) {
   		bookmark.save().complete(function(err, bookmark) {
   				// add error handling
 	  	});
-
-	  	pageUrl = db.Session.encryptId(session.id);
 		});
+		
+	  pageUrl = db.Session.encryptId(session.id);
+	  res.send({'result':'OK', 'url':pageUrl});
 	});
 
-  res.send({'result':'OK', 'url':pageUrl});
 };
