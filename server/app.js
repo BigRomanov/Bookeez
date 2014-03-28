@@ -3,22 +3,22 @@
  * Module dependencies.
  */
 
-var express = require('express'),
-    routes = require('./routes'),
-    Auth = require('./routes/Auth/Auth'),
-    user = require('./routes/user'),
-    api = require('./routes/api')
-    path = require('path'),
-    http = require('http'),
-    fs = require('fs'),
-    client = require('./models');
+var express = require('express')
+  , _       = require('underscore')
+  , routes  = require('./routes')
+  , Auth    = require('./routes/Auth/Auth')
+  , user    = require('./routes/user')
+  , api     = require('./routes/api')
+  , path    = require('path')
+  , http    = require('http')
+  , fs      = require('fs')
+  , db      = require('./models')
+    // client  = require('./models');
 
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 
-passport.use(new LocalStrategy({
-        usernameField: 'email'
-    },
+passport.use(new LocalStrategy({ usernameField: 'email' },
     function(email, password, done) {
         return Auth.findByUsername(passport, email, password, done);
     }
@@ -96,7 +96,18 @@ app.post('/reset', express.bodyParser(), Auth.reset(forgot));
 // api
 app.post('/api/add_session', api.add_session)
 
-//start server
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Bookies server listening on port ' + app.get('port'));
-});
+db
+  .sequelize
+  .sync({ force: true })
+  .complete(function(err) {
+    if (err) {
+      throw err
+    } else {
+      //start server
+      http.createServer(app).listen(app.get('port'), function(){
+        console.log('Bookies server listening on port ' + app.get('port'));
+      });
+    }
+  })
+
+

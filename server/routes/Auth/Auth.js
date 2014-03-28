@@ -2,12 +2,25 @@
  * This is the route for all controllers involved with user login, register, and forgot password requests
  */
 
-var passwordHash = require('password-hash');
+var passwordHash = require('password-hash')
+  , mysql        = require('mysql');
 
-var client = require('../.././models').client,
-    DBtables = require('../.././models').DBtables,
-    usersDB = DBtables.usersDB,
-    resetDB = DBtables.resetDB;
+
+var client = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'viper12',
+  database: 'data'
+}).connect();
+
+var DBtables = {
+    usersDB : "users",
+    bookmarksDB : "bookmarks",
+    resetDB : "password_reset_requests"
+}
+
+var usersDB = DBtables.usersDB;
+var resetDB = DBtables.resetDB;
 
 //email validation. returns boolean
 function validateEmail(email) {
