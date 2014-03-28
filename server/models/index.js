@@ -27,6 +27,16 @@ Object.keys(db).forEach(function(modelName) {
     db[modelName].associate(db)
   }
 })
+
+sequelize
+  .sync({ force: true })
+  .complete(function(err) {
+     if (!!err) {
+       console.log('An error occurred while create the table:', err)
+     } else {
+       console.log('It worked!')
+     }
+  });
  
 module.exports = lodash.extend({
   sequelize: sequelize,
