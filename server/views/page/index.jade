@@ -1,5 +1,8 @@
 extends ../layout
 
 block content
-  div(ng-controller="pageController")
-    div(ng-view)
+  div(ng-controller="pageController", ng-init="bookmarks= #{JSON.stringify(bookmarks)}")
+    div(class="bookmark_list")
+      ul
+        li(ng-repeat="bookmark in bookmarks") 
+          a(href="{{bookmark.url}}") {{bookmark.title}}

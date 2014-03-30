@@ -18,11 +18,8 @@ module.exports = function(sequelize, DataTypes) {
       encryptId: function(id) {
         // TODO: Add more stuff, such as timestamp
         var text = '' + id;
-        console.log(text);
         var cipher = crypto.createCipher(algorithm, key);  
-        console.log(cipher);
         var encrypted = cipher.update(text, 'utf8', 'hex') + cipher.final('hex');
-        console.log(encrypted);
         return encrypted;
         
       }, 

@@ -17,6 +17,7 @@
     "password-hash": "~1.2.1",
     "ent": "~0.1.0",
     "lodash": "~2.4.1",
-    "underscore": "~1.6.0"
+    "underscore": "~1.6.0",
+    "async": "~0.6.0"
   }
 }
