@@ -6,7 +6,7 @@ exports.show =  function(req, res){
 	
 	db.Bookmark.findAll({where: {SessionId :sessionId}}).success(function(bookmarks) {
 		res.render('page/index', {
-    	title: 'Open tabs',
+    	title: 'Bookeez',
     	user: req.user,
     	bookmarks: bookmarks
   	});

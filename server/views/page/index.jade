@@ -5,4 +5,5 @@ block content
     div(class="bookmark_list")
       ul
         li(ng-repeat="bookmark in bookmarks") 
-          a(href="{{bookmark.url}}") {{bookmark.title}}
+          img(class="favicon" src="{{bookmark.faviconUrl}}")
+          a(href="{{bookmark.url}}", target="_blank") {{bookmark.title}}

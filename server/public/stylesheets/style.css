@@ -1,8 +1,42 @@
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+
 }
 
 a {
   color: #00B7FF;
+}
+
+.container {
+  width:800px;
+}
+
+.bookmark_list {
+
+}
+
+.bookmark_list a{
+  vertical-align: middle;
+  text-decoration: none;
+}
+
+.bookmark_list ul {
+  list-style-type: none;
+  list-style-position: outside;
+  list-style-image: none;
+}
+
+.bookmark_list li {
+  padding:10px;
+  margin:10px;
+  font-size:20px;
+  line-height: 20px;
+}
+
+.bookmark_list .favicon {
+  width: 20px;
+  height: 20px;
+  margin:10px;
+  vertical-align: middle;
 }

@@ -14,11 +14,10 @@ exports.add_session =  function(req, res) {
     // TODO: check for error
 
 		async.eachSeries(tabs, function(tab, callback) {
-
 			var bookmark = db.Bookmark.build({
     		title: tab.title,
     		url: tab.url,
-        faviconUrl: tab.faviconUrl,
+        faviconUrl: tab.favIconUrl,
         SessionId: session.id
   		});
 
