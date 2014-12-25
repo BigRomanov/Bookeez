@@ -12,11 +12,11 @@
     "http://*/"
   ],
 
-  // "app": {
-  //   "launch": {
-  //     "local_path": "app.html"
-  //   }
-  // },
+  "app": {
+    "launch": {
+      "local_path": "app.html"
+    }
+  },
 
   "chrome_url_overrides" : {
     "bookmarks": "app.html"
@@ -27,14 +27,14 @@
     "16": "images/icons/icon_16.png"
   },
 
-  "browser_action": {
-    "default_icon": {                    
-      "19": "images/icons/icon_16.png",   
-      "38": "images/icons/icon_16.png"    
-    },
-    "default_title": "BookeeZ",      // optional; shown in tooltip
-    "default_popup": "popup.html"    
-  },
+  // "browser_action": {
+  //   "default_icon": {                    
+  //     "19": "images/icons/icon_16.png",   
+  //     "38": "images/icons/icon_16.png"    
+  //   },
+  //   "default_title": "BookeeZ",      // optional; shown in tooltip
+  //   "default_popup": "popup.html"    
+  // },
 
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }
