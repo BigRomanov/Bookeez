@@ -9,7 +9,8 @@ var app =  angular.module('bookiesApp', ['ui.bootstrap', 'bootstrap-tagsinput', 
 
 app.config(['$routeProvider', function($routeProvider) {
    $routeProvider.when('/tree', {templateUrl: 'partials/tree.tpl.html', controller: 'treeController'});
-   $routeProvider.otherwise({redirectTo: '/tree'});
+   $routeProvider.when('/history', {templateUrl: 'partials/history.tpl.html', controller: 'historyController'});
+   $routeProvider.otherwise({redirectTo: '/history'});
 }]);
 
 return app;

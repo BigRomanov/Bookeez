@@ -1,19 +1,16 @@
 define(
-'controllers/tree',
+'controllers/history',
 [
   'jQuery', 
   'bookiesApp', 
-  'models/bookmarkModel',
+  'models/historyModel',
   'filters/filters',
 ], 
 function($, bookiesApp) { 'use strict';
 
-/*
-* Tree view controller.
-*/
-var TreeController = function($scope, $filter, $modal, bookmarkModel) {
-  $scope.searchText = ''; // Search text
-  $scope.bookmarkTree = {}; // All bookmarks as tree
+var HistoryController = function($scope, $filter, $modal, historyModel) {
+  $scope.searchText = ''; 
+  $scope.history = []; 
 
   $scope.selectedIndex = 0;
 
@@ -60,25 +57,25 @@ var TreeController = function($scope, $filter, $modal, bookmarkModel) {
   });
 */
 
-  bookmarkModel.load(function(bookmarks) {
-    $scope.loadedTree = bookmarks;
+  historyModel.load(function(history) {
+    $scope.history = history;
     $scope.$apply();
   }.bind(this));
 
   // Handle search event
-  $scope.$on('search', function(event, searchText) {
-    $scope.searchPrefix = searchText;
+  // $scope.$on('search', function(event, searchText) {
+  //   $scope.searchPrefix = searchText;
 
-    if (searchText) {
-      $scope.bookmarkTree = bookmarkModel.filterTree($scope.bookmarkTree, searchText);
-    }
-    else {
-      $scope.bookmarkTree = $scope.loadedTree;
-    }
-  });
+  //   if (searchText) {
+  //     $scope.bookmarkTree = bookmarkModel.filterTree($scope.bookmarkTree, searchText);
+  //   }
+  //   else {
+  //     $scope.bookmarkTree = $scope.loadedTree;
+  //   }
+  // });
 }
 
-bookiesApp.controller('treeController', ['$scope', '$filter', '$modal', 'bookmarkModel', TreeController]);
+bookiesApp.controller('historyController', ['$scope', '$filter', '$modal', 'historyModel', HistoryController]);
 
 });
 

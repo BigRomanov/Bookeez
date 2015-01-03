@@ -14,7 +14,8 @@ require.config({
     models: 'models',
     'bootstrap-tagsinput': 'lib/bootstrap-tagsinput.min',
     'bootstrap-tagsinput-angular': 'lib/bootstrap-tagsinput-angular',
-    'ng-tags-input' : 'lib/ng-tags-input'
+    'ng-tags-input' : 'lib/ng-tags-input',
+    'URI' : 'lib/URI'
   },
   shim: {
     'jQuery': {
@@ -60,11 +61,13 @@ require([
   'bootstrap-tagsinput-angular',
   'ng-tags-input',
   'filters/filters',
+  'URI',
+  // Analyzer
+  'analyzer/analyzer',
   // Directives
   'directives/directives',
   // Controllers
-  'controllers/tree', 
-  'controllers/popup', 
+  'controllers/history', 
   'controllers/header', ], function($, angular) {
     angular.bootstrap(document, ['bookiesApp']);
   });
