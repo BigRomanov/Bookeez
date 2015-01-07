@@ -22,9 +22,21 @@ var Mind = {
       _.each(tabs, function(tab) {
         console.log(tab.url);
 
-        // Extract the domain from URL
-        var uri = new URI(tab.url);
-        console.log(uri.hostname());
+        if (tab.url) {
+          // Extract the domain from URL
+          var uri = new URI(tab.url);
+          console.log(uri.hostname(), uri.protocol());  
+
+          chrome.tabs.sendRequest(tab.id, {method: "getText"}, function(response) {
+            if(response && response.method=="getText"){
+                  console.log(response.data);
+              }
+          });
+
+          // $.get(tab.url, function(data) {
+          //   console.log(data);
+          // });
+        }
 
       });
 
