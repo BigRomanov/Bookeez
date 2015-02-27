@@ -4,18 +4,17 @@
         <meta charset="utf-8" />
         <title>Bookmarks</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="./css/bootstrap.min.css">
-        <link rel="stylesheet" href="./css/bootstrap-theme.css">
-        <link rel="stylesheet" href="./css/bootstrap-tagsinput.css">
-        <link rel="stylesheet" href="./css/ng-tags-input.css">
-        <link rel="stylesheet" href="./css/font-awesome.min.css">
+        
         <link rel="stylesheet" href="./css/popup.css">
-        <link rel="stylesheet" href="./css/inline-editor.css">
-        <script src="./js/lib/require.min.js"></script>
-        <script src="./js/startup.js"></script>
+        
+        <script src="./js/lib/jquery-2.0.3.js"></script>
+        <script src="./js/popup/popup.js"></script>
     </head>
     <body>
-      <div class="tab-list-container" ng-controller="popupController">
+      <div style="width:200px;height:400px">
+        <a id="openAppPage" href="#">Open app</a>
+      </div>
+      <!-- <div class="tab-list-container" ng-controller="popupController">
 
         <div class="tab-list-header">
           <div class="tab-list-title">
@@ -33,6 +32,6 @@
           	<open-tab ng-repeat="tab in openTabs"></open-tab>
           </div>
         </div>
-      </div>
+      </div> -->
     </body>
 </html>

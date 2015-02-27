@@ -3,14 +3,15 @@ console.log("Processing historyModel");
 define(
 'models/historyModel',
 [ 
-  'underscore', 
+  'underscore',
   'bookiesApp',
+  'analyzer/analyzer'
 ],
 
 function(_, bookiesApp) { "use strict";
   console.log("Processing historyModel function");
   
-  var HistoryModel = function () {
+  var HistoryModel = function (analyzer) {
  
     
     this.load = function(callback) {
@@ -21,7 +22,14 @@ function(_, bookiesApp) { "use strict";
       var numRequestsOutstanding = 0;
 
       chrome.history.search({'text' : '', 'startTime' : oneWeekAgo }, function(historyItems) {
-        callback(historyItems);
+        console.log("zzzzzzzzzz");
+        console.log(analyzer);
+        analyzer.test();
+
+        analyzer.analyzeItems(historyItems, function(analyzedItems) {
+          callback(analyzedItems);  
+        });
+        
       });
       //   function(historyItems) {
       //     // For each history item, get details on all visits.
@@ -45,8 +53,8 @@ function(_, bookiesApp) { "use strict";
     };
   };
 
-  bookiesApp.factory('historyModel', function() {
-    return new HistoryModel();
-  });
+  bookiesApp.factory('historyModel', ['analyzer', function(analyzer) {
+    return new HistoryModel(analyzer);
+  }]);
 
 });
