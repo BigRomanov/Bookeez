@@ -14,12 +14,19 @@ function(_, URI, bookiesApp) { "use strict";
   var Analyzer = function () {
 
     this.test = function() {
-      console.log("zzzzzzzzzzzzzzzzzz");
+      console.log("test");
     }
 
     this.analyzeItems = function(items, callback) {
-      console.log(items);
-      callback(_.each(items, analyze));
+      console.log("Analyzing items");
+      
+      var analyzedItems = _.map(items, function(item) {
+        console.log("Analyzing item", item)
+        item.group = "Test";
+        return item;
+      });
+
+      callback(analyzedItems);
     }
 
     this.analyze = function(item) {

@@ -22,11 +22,10 @@ function(_, bookiesApp) { "use strict";
       var numRequestsOutstanding = 0;
 
       chrome.history.search({'text' : '', 'startTime' : oneWeekAgo }, function(historyItems) {
-        console.log("zzzzzzzzzz");
-        console.log(analyzer);
-        analyzer.test();
-
+        console.log("Calling analyzer");
         analyzer.analyzeItems(historyItems, function(analyzedItems) {
+          console.log("Finished analyzing items");
+          console.log(analyzedItems);
           callback(analyzedItems);  
         });
         

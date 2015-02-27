@@ -2,6 +2,7 @@
 
 require.config({ 
   baseUrl: '/js',
+  waitSeconds: 200,
   paths: {
     underscore: 'lib/underscore.min',
     jQuery: 'lib/jquery-2.0.3.min',
@@ -60,12 +61,17 @@ require([
   'bootstrap-tagsinput',
   'bootstrap-tagsinput-angular',
   'ng-tags-input',
-  'filters/filters',
   'URI',
+
   // Analyzer
   'analyzer/analyzer',
+
   // Directives
   'directives/directives',
+
+  // Filters
+  'filters/filters',
+
   // Controllers
   'controllers/history', 
   'controllers/header', ], function($, angular) {
