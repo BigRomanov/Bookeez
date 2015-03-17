@@ -1,7 +1,4 @@
-console.log("We are up and running");
-
-
-Mind.analyze();
+console.log("BACKGROUND SCRIPT: We are up and running");
 
 
 // chrome.tabs.onCreated.addListener(function(tab) {

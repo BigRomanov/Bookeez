@@ -10,7 +10,7 @@ function($, bookiesApp) { 'use strict';
 /*
 * Application controller.
 */
-var HeaderController = function($scope, $rootScope, $filter, $modal, $timeout) {
+var HeaderController = function($scope, $rootScope, $filter, $timeout) {
   $scope.searchText = ''; // Search text
 
   var tempFilterText = '', filterTextTimeout;
@@ -29,6 +29,6 @@ var HeaderController = function($scope, $rootScope, $filter, $modal, $timeout) {
   
 }
 
-bookiesApp.controller('headerController', ['$scope', '$rootScope','$filter', '$modal', '$timeout',HeaderController]);
+bookiesApp.controller('headerController', ['$scope', '$rootScope','$filter', '$timeout',HeaderController]);
 
 });

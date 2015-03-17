@@ -5,7 +5,7 @@ define(
 [ 
   'underscore',
   'bookiesApp',
-  'analyzer/analyzer'
+  // 'analyzer/analyzer'
 ],
 
 function(_, bookiesApp) { "use strict";
@@ -22,12 +22,14 @@ function(_, bookiesApp) { "use strict";
       var numRequestsOutstanding = 0;
 
       chrome.history.search({'text' : '', 'startTime' : oneWeekAgo }, function(historyItems) {
-        console.log("Calling analyzer");
-        analyzer.analyzeItems(historyItems, function(analyzedItems) {
-          console.log("Finished analyzing items");
-          console.log(analyzedItems);
-          callback(analyzedItems);  
-        });
+        console.log("Calling analyzer", historyItems);
+        // console.log(analyzer);
+        // analyzer.analyzeItems(historyItems, function(analyzedItems) {
+        //   console.log("Finished analyzing items");
+        //   console.log(analyzedItems);
+        //   callback(analyzedItems);  
+        // });
+        callback(historyItems);
         
       });
       //   function(historyItems) {
@@ -52,8 +54,10 @@ function(_, bookiesApp) { "use strict";
     };
   };
 
-  bookiesApp.factory('historyModel', ['analyzer', function(analyzer) {
-    return new HistoryModel(analyzer);
+  bookiesApp.factory('historyModel', [function() {
+    return new HistoryModel();
   }]);
+
+
 
 });

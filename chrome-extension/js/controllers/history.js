@@ -8,7 +8,7 @@ define(
 ], 
 function($, bookiesApp) { 'use strict';
 
-var HistoryController = function($scope, $filter, $modal, historyModel) {
+var HistoryController = function($scope, $filter, historyModel) {
   $scope.searchText = ''; 
   $scope.history = []; 
 
@@ -75,7 +75,7 @@ var HistoryController = function($scope, $filter, $modal, historyModel) {
   // });
 }
 
-bookiesApp.controller('historyController', ['$scope', '$filter', '$modal', 'historyModel', HistoryController]);
+bookiesApp.controller('historyController', ['$scope', '$filter', 'historyModel', HistoryController]);
 
 });
 

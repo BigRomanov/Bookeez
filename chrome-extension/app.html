@@ -2,93 +2,21 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>Bookmarks</title>
+        <title>Cementic</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <!-- <link rel="stylesheet" href="./css/bootstrap.min.css">
         <link rel="stylesheet" href="./css/bootstrap-theme.css">
         <link rel="stylesheet" href="./css/bootstrap-tagsinput.css">
         <link rel="stylesheet" href="./css/ng-tags-input.css">
-        <link rel="stylesheet" href="./css/font-awesome.min.css">
+        <link rel="stylesheet" href="./css/font-awesome.min.css"> -->
         <link rel="stylesheet" href="./css/style.css">
-        <script src="./js/lib/require.min.js"></script>
-        <script src="./js/startup.js"></script>
+        <script src="./js/lib/URI.js"></script>
+        <script src="./js/lib/require.min.js" data-main="./js/startup.js"></script>
+        
     </head>
     <body>
       
       <div ng-view></div>
 
-      <!--Navbar Footer-->
-      <div class="navbar navbar-fixed-bottom navbar-inverse" role="footer">
-        <div class="container">
-          
-          <small class="navbar-text">
-            2014 © LirCo & MistralZ 
-          </small>
-          
-          <!-- TODO: fix link to Chrome Store and Github-->
-          <div class="pull-right">
-            <a href="https://chrome.google.com/webstore/detail/bookmarks/aahpfefkmihhdabllidnlipghcjgpkdm/reviews" 
-               class="navbar-text margin-right-5px">
-              <small><i class="fa fa-thumbs-up fa-lg"></i> Review</small>
-            </a>
-          </div>
-        </div>
-      </div> <!--Navbar Footer End-->
-
-      <!--Navbar Header-->
-      <div ng-controller="headerController" class="navbar navbar-fixed-top navbar-inverse" role="navigation">
-          <div class="container">
-              <div class="navbar-header">
-                  <a class="navbar-brand">Bookies</a>
-              </div>
-              <form class="navbar-form navbar-left" role="search" >
-                <div class="form-group">
-                  <input type="search" class="form-control search-bookmarks" placeholder="Search" ng-model="searchText" autofocus="true">
-                </div>
-              </form>
-
-              <a class="navbar-text navbar-right" data-toggle="modal" data-target="#loginModal">Login</a>
-              <a class="navbar-text navbar-right" data-toggle="modal" data-target="#registerModal">Register</a>
-
-          </div>
-      </div> <!--Navbar Header End-->
-
-      <!--Login Modal -->
-      <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-              <div class="modal-content">
-                  <div class="modal-header">
-                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                      <h4 class="modal-title" id="loginModalLabel">Modal title</h4>
-                  </div>
-                  <div class="modal-body">
-                      ...
-                  </div>
-                  <div class="modal-footer">
-                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary">Save changes</button>
-                  </div>
-              </div>
-          </div>
-      </div> <!--Login Modal End-->
-
-      <!--Register Modal -->
-      <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-              <div class="modal-content">
-                  <div class="modal-header">
-                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                      <h4 class="modal-title" id="registerModalLabel">Modal title</h4>
-                  </div>
-                  <div class="modal-body">
-                      ...
-                  </div>
-                  <div class="modal-footer">
-                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary">Save changes</button>
-                  </div>
-              </div>
-          </div>
-      </div> <!--Register Modal End-->
     </body>
 </html>

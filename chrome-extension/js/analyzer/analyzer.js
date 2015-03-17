@@ -1,39 +1,38 @@
 console.log("Loading Analyzer");
 
-define(
-'analyzer/analyzer',
-[ 
-  'underscore', 
-  'URI',
-  'bookiesApp',
-],
+define( 'analyzer/analyzer', [ 'underscore', 'URI',  'bookiesApp'],
 
 function(_, URI, bookiesApp) { "use strict";
-  console.log("Processing historyModel function");
+  console.log("Processing analyzer function");
   
   var Analyzer = function () {
 
-    this.test = function() {
-      console.log("test");
-    }
-
     this.analyzeItems = function(items, callback) {
-      console.log("Analyzing items");
-      
-      var analyzedItems = _.map(items, function(item) {
-        console.log("Analyzing item", item)
-        item.group = "Test";
-        return item;
-      });
+      console.log("analyzeItems", items);
+      callback(items);  
+      // var self = this;
 
-      callback(analyzedItems);
+
+      // var analyzedItems = _.map(items, function(item) {
+
+      //   // Assign item group (TODO: Implement as labels)
+      //   item.group = self.assignGroup(item);
+
+      //   return item;
+      // });
+
+      // callback(analyzedItems);
     }
 
-    this.analyze = function(item) {
-      console.log(item);
-      var _item = _.clone(item);
-      _item.group = "Test";
-      return _item;
+    this.assignGroup = function(item) {
+      // Check if url contains 'twitter', assign twitter group
+
+      // if (S(item.url).contains("twitter")) {
+      //   return "Twitter";
+      // }
+      // else {
+      //   return "Other";
+      // }
     }
  
     
@@ -45,6 +44,7 @@ function(_, URI, bookiesApp) { "use strict";
     };
   };
 
+console.log("Loading Analyzer 2");
   bookiesApp.factory('analyzer', function() {
     console.log("Creating new analyzer");
     return new Analyzer();

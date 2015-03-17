@@ -1,4 +1,11 @@
 console.log("Running content script");
+
+// Get the head of the document
+console.log($('head').html());
+console.log($('meta').html());
+
+
+
 chrome.extension.onRequest.addListener(
     function(request, sender, sendResponse) {
         if(request.method == "getText"){
